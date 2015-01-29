@@ -55,7 +55,6 @@
       } else {
         this.pauseOffset = 0; 
         this.startTime = (new Date()).getTime(); 
-        console.log(',,',this.startTime);
       }
       cancelAnimationFrame(this.animationId);
       this.run();
