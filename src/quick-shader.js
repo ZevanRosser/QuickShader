@@ -28,9 +28,16 @@
       console.warn('You must specify a valid fragment shader'); 
     }
     
+    
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+    
     if (params.parentNode) {
       this.parentNode = typeof params.parentNode === 'object' ? 
         params.parentNode : document.querySelector(params.parentNode);
+      
+      this.parentNode.appendChild(this.canvas);
     }
     
     this.init(); 
@@ -42,11 +49,6 @@
     
     init: function() { 
       var gl, vertices;
-      
-      this.canvas = document.createElement('canvas');
-      this.canvas.width = this.width;
-      this.canvas.height = this.height;
-      this.parentNode.appendChild(this.canvas);
       
       gl = this.gl = this.ctx = this.canvas.getContext("experimental-webgl");
     
@@ -60,14 +62,20 @@
       this.size(this.width, this.height);
     },
     
+    play: function() {
+      
+    },
+    
+    pause: function() {
+      
+    },
+    
     size: function(width, height) {
       this.width = width;
       this.height = height;
     },
     
-    configureShader : function()
-    {
-      
+    configureShader: function() {
       var gl = this.gl,
           tmpProgram = gl.createProgram(),
           vs = gl.createShader(gl.VERTEX_SHADER),
@@ -87,35 +95,43 @@
       
       gl.linkProgram(tmpProgram);
       
-      if(this.shaderProgram) {
-        gl.deleteProgram( this.shaderProgram );
+      if (this.shaderProgram) {
+        gl.deleteProgram(this.shaderProgram);
       }
       
       this.shaderProgram = tmpProgram;
     },
     
     render: function(time) {
-      var gl = this.gl;
+      var gl = this.gl, l1, l2, l3, t0;
+      time = time || 0;
       
       gl.viewport( 0, 0, this.width, this.height );
       
       gl.useProgram(this.shaderProgram);
       
-      var l1 = gl.getAttribLocation(this.shaderProgram, "pos");
-      var l2 = gl.getUniformLocation(this.shaderProgram, "time");
-      var l3 = gl.getUniformLocation(this.shaderProgram, "resolution");
+      l1 = gl.getAttribLocation(this.shaderProgram, "pos");
+      l2 = gl.getUniformLocation(this.shaderProgram, "time");
+      l3 = gl.getUniformLocation(this.shaderProgram, "resolution");
       
-      var t0 = gl.getUniformLocation(this.shaderProgram, "tex0");
+      // t0 = gl.getUniformLocation(this.shaderProgram, "tex0");
       
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
-      if( l2!=null ) gl.uniform1f(l2, time);
-      if( l3!=null ) gl.uniform2f(l3, this.width, this.height);
+      
+      if (l2 !== null) { gl.uniform1f(l2, time); }
+      if (l3 !== null) { gl.uniform2f(l3, this.width, this.height); }
       
       gl.vertexAttribPointer(l1, 2, gl.FLOAT, false, 0, 0);
       
       gl.enableVertexAttribArray(l1);
       
-      if( t0!=null ) { gl.uniform1i(t0, 0 ); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.mTexture); }
+      /*
+      if (t0 !== null) { 
+        gl.uniform1i(t0, 0 ); 
+        gl.activeTexture(gl.TEXTURE0); 
+        gl.bindTexture(gl.TEXTURE_2D, this.mTexture); 
+      }
+      */
       
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       gl.disableVertexAttribArray(l1);
