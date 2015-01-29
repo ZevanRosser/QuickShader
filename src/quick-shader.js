@@ -1,4 +1,4 @@
-(function() {
+/*(function() {
   
   // requestAnimationFrame shim with setTimeout fallback by 
   // Paul Irish http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -35,18 +35,7 @@
     
     this.init();
     
-    /*
-     // Create the canvas element, compile the shader code, and bind the XOR texture to the context.
-  var txt = document.getElementById( 'effectShader' ).textContent;
-  //document.write("<canvas id='x'></canvas>");
-  var can = document.createElement('canvas');
-  can.setAttribute('id', 'x');
-  document.body.appendChild(can);
-  var glCanvas = document.getElementById("x");
-  var glContext = glCanvas.getContext("experimental-webgl");  
-  var effect = new Effect( glContext, glCanvas.width, glCanvas.height );
-  effect.NewShader( txt );
-    */
+ 
     
   };
   
@@ -66,7 +55,7 @@
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
       
-      
+      console.log(this.parentNode);
       
       this.parentNode.appendChild(this.canvas);
       this.configureShader();
@@ -91,7 +80,7 @@
     },
     
     configureShader: function() {
-      console.log(this.shader);
+      // console.log(this.shader);
       var gl = this.gl,
           tmpProgram = gl.createProgram(),
           vs = gl.createShader(gl.VERTEX_SHADER),
@@ -128,7 +117,7 @@
       if( this.mProgram != null ) gl.deleteProgram( this.mProgram );
       
       this.mProgram = tmpProgram;
-      console.log(this.mProgram);
+ 
     },
     
     render: function(time) {
@@ -162,4 +151,4 @@
     
   };
   
-})();
+})();*/
