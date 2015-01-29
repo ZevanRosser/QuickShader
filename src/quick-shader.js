@@ -52,7 +52,6 @@
      
       if (this.pauseOffset) {
         this.pauseOffset = (new Date()).getTime() - this.startTime - this.pauseOffset;
-        console.log('odd', this.pauseOffset);
       } else {
         this.pauseOffset = 0; 
         this.startTime = (new Date()).getTime(); 
