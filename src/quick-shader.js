@@ -51,7 +51,7 @@
     play: function() {
      
       if (this.pauseOffset) {
-        this.pauseOffset = (new Date()).getTime() - this.pauseOffset;
+        this.pauseOffset = (new Date()).getTime() - this.startTime - this.pauseOffset;
         console.log('odd', this.pauseOffset);
       } else {
         this.pauseOffset = 0; 
@@ -63,12 +63,12 @@
     },
     
     run: function() {
-      this.render( ((new Date()).getTime() - this.startTime - this.pauseOffset)/1000 );
+      this.render(((new Date()).getTime() - this.startTime - this.pauseOffset) / 1000);
       this.animationId = requestAnimationFrame( this.run );
     },
     
     pause: function() {
-      this.pauseOffset = new Date().getTime();
+      this.pauseOffset = (new Date()).getTime() - this.startTime;
       cancelAnimationFrame(this.animationId);
     },
     
@@ -119,8 +119,7 @@
       // t0 = gl.getUniformLocation(this.shaderProgram, "tex0");
       
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
-      
-      console.log(time);
+
       if (l2 !== null) { gl.uniform1f(l2, time); }
       if (l3 !== null) { gl.uniform2f(l3, this.width, this.height); }
       
