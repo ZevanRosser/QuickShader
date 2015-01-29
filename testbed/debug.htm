@@ -8,7 +8,7 @@
     <script>
       
       window.addEventListener('load', function() {
-   
+        
         var q = new QuickShader({
           shader: document.getElementById('z').textContent,
           width: 200, 
@@ -18,7 +18,7 @@
         
         q.Paint(0);
         
- 
+        
         
         // q.canvas
         // q.ctx = q.gl
@@ -46,12 +46,11 @@
       uniform vec2 resolution;
       uniform float time;
       uniform sampler2D tex0;
-            void main(void)
-        {
-
-      vec3 col = vec3(gl_FragCoord.x / resolution.x, 0.0, 0.0);
-      
-      gl_FragColor = vec4(col,1.0);
+      void main(void) {
+        
+        vec3 col = vec3(cos(gl_FragCoord.x / resolution.x * 100.0), 0.0, 0.0);
+        
+        gl_FragColor = vec4(col,1.0);
       }
     </script>
     
