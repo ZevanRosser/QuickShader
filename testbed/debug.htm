@@ -4,19 +4,18 @@
     <meta charset="utf-8" />
     <title>QuickShader Debug</title>
     <script src="../src/quick-shader.js"></script>
-    <script src="../src/original.js"></script>
     <script>
       
       window.addEventListener('load', function() {
         
         var q = new QuickShader({
-          shader: document.getElementById('z').textContent,
+          shader: document.getElementById('some-shader').textContent,
           width: 400, 
           height: 350,
-          parentNode: '#frame2'
+          parentNode: '#frame'
         });
         
-        q.Paint(0);
+        q.render(0);
         
         
         // q.canvas
@@ -39,9 +38,7 @@
     
     <div id="frame"></div>
     
-    <div id="frame2"></div>
-    
-    <script id="z" type="x-shader/x-fragment">
+    <script id="some-shader" type="x-shader/x-fragment">
       #ifdef GL_ES
         precision highp float;
       #endif
