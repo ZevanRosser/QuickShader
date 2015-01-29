@@ -1,20 +1,5 @@
 (function() {
   
-  // requestAnimationFrame shim with setTimeout fallback by 
-  // Paul Irish http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
-  
-  if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = (function() {
-      return window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function ( callback, element ) {
-          window.setTimeout( callback, 1000 / 60 );
-        };
-    })();
-  }
-  
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
   // by Jeremy Burns https://github.com/jaburns
   
@@ -27,7 +12,6 @@
     if (!this.shader){
       console.warn('You must specify a valid fragment shader'); 
     }
-    
     
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
@@ -60,14 +44,32 @@
       
       this.configureShader();
       this.size(this.width, this.height);
+      
+      this.run = this.run.bind(this);
     },
     
     play: function() {
-      
+     
+      if (this.pauseOffset) {
+        this.pauseOffset = (new Date()).getTime() - this.pauseOffset;
+        console.log('odd', this.pauseOffset);
+      } else {
+        this.pauseOffset = 0; 
+        this.startTime = (new Date()).getTime(); 
+        console.log(',,',this.startTime);
+      }
+      cancelAnimationFrame(this.animationId);
+      this.run();
+    },
+    
+    run: function() {
+      this.render( ((new Date()).getTime() - this.startTime - this.pauseOffset)/1000 );
+      this.animationId = requestAnimationFrame( this.run );
     },
     
     pause: function() {
-      
+      this.pauseOffset = new Date().getTime();
+      cancelAnimationFrame(this.animationId);
     },
     
     size: function(width, height) {
@@ -118,6 +120,7 @@
       
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
       
+      console.log(time);
       if (l2 !== null) { gl.uniform1f(l2, time); }
       if (l3 !== null) { gl.uniform2f(l3, this.width, this.height); }
       

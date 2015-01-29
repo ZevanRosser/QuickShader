@@ -15,7 +15,13 @@
           parentNode: '#frame'
         });
         
-        q.render(0);
+        q.play();
+        
+        var t = true;
+        document.onclick = function() {
+          t ? q.pause() : q.play();
+          t = !t;
+        };
         
         
         // q.canvas
@@ -48,7 +54,7 @@
       uniform sampler2D tex0;
       void main(void) {
         
-        vec3 col = vec3(cos(gl_FragCoord.x / resolution.x * 100.0), 0.0, 0.0);
+        vec3 col = vec3(abs(cos(time)), 0.0, 0.0);
         
         gl_FragColor = vec4(col,1.0);
       }
