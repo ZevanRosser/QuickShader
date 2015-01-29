@@ -9,7 +9,7 @@
       window.addEventListener('load', function() {
         
         var q = new QuickShader({
-          shader: document.getElementById('some-shader').textContent,
+          shader: document.getElementById('effectShader').textContent,
           width: 200, 
           height: 200,
           parentNode: '#frame'
@@ -31,7 +31,7 @@
     
     <div id="frame"></div>
     
-    <script id="some-shader" type="x-shader/x-fragment">
+    <script id="effectShader" type="x-shader/x-fragment">
       #ifdef GL_ES
         precision highp float;
       #endif
@@ -39,7 +39,7 @@
       uniform vec2 resolution;
       uniform float time;
       uniform sampler2D tex0;
-      void main(void)
+            void main(void)
         {
 
       vec3 col = vec3(gl_FragCoord.x / resolution.x, 0.0, 0.0);
