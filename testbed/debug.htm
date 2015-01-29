@@ -1,22 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>QuickShader Debug</title>
-  <script src="../src/quick-shader.js"></script>
-  <script>
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var q = new QuickShader({
+          shader: document.getElementById('some-shader').textContent,
+          width: 200, 
+          height: 200,
+          parentNode: '#frame'
+        });
+        
+        // q.canvas
+        // q.ctx
+        // q.resize(x, y)
+        
+        // document.body.appendChild(q.canvas);
+        
+        
+      });
+    </script>
+    <style>
+    </style>
+  </head>
+  <body>
     
-    window.addEventListener('load', function() {
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      #ifdef GL_ES
+        precision highp float;
+      #endif
+        
+      uniform vec2 resolution;
+      uniform float time;
+      uniform sampler2D tex0;
+      void main(void)
+        {
+
+      vec3 col = vec3(gl_FragCoord.x / resolution.x, 0.0, 0.0);
       
-      var q = new QuickShader();
-      
-      
-    });
-  </script>
-  <style>
-  </style>
-</head>
-<body>
-  
-</body>
+      gl_FragColor = vec4(col,1.0);
+      }
+    </script>
+    
+  </body>
 </html>
