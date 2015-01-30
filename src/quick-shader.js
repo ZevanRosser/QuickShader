@@ -25,6 +25,7 @@
     }
     
     this.pauseOffset = 0;
+    this.totalPauseTime = 0;
     
     this.init(); 
   };
@@ -50,27 +51,38 @@
       this.run = this.run.bind(this);
     },
     
-    play: function() {
-      
-      if (this.pauseOffset) {
-        this.pauseOffset = (new Date()).getTime() - this.startTime - this.pauseOffset;
-      } else {
-        this.pauseOffset = 0; 
-        this.startTime = (new Date()).getTime(); 
+    destroy: function() {
+      this.reset();
+      if (this.canvas.parentNode) {
+        this.canvas.parentNode.removeChild(this.canvas);
       }
-      
+    }, 
+    
+    reset: function() {
+      this.startTime = null;
       cancelAnimationFrame(this.animationId);
+    },
+    
+    play: function() {
+      this.totalPauseTime += this.pauseOffset;
+      this.paused = false;
+      
+      if (this.startTime) { return; }
+      
+      this.startTime = +new Date();
       this.run();
     },
     
     run: function() {
-      this.render(((new Date()).getTime() - this.startTime - this.pauseOffset) / 1000);
+      var time = (+new Date() - this.startTime - this.totalPauseTime) / 1000;
+      this.render(time) 
       this.animationId = requestAnimationFrame( this.run );
     },
     
     pause: function() {
-      this.pauseOffset = (new Date()).getTime() - this.startTime +  this.pauseOffset;
-      cancelAnimationFrame(this.animationId);
+      this.paused = true;
+      this.pauseTime = +new Date();
+       
     },
     
     size: function(width, height) {
@@ -108,6 +120,11 @@
     render: function(time) {
       var gl = this.gl, l1, l2, l3, t0;
       time = time || 0;
+      
+      if (this.paused){
+        this.pauseOffset = (+new Date() - this.pauseTime);
+        return;
+      }
       
       gl.viewport( 0, 0, this.width, this.height );
       
