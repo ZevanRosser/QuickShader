@@ -67,3 +67,4 @@ uniform float time;
 
 ## Todo
 mouse, date?, textures? demos
+minify
