@@ -47,7 +47,7 @@ q.canvas;
 // the canvas context
 q.gl;
 
-// alias of q.gl
+// alias of `gl`
 q.ctx;
     
 ```
