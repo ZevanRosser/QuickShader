@@ -53,6 +53,16 @@ q.ctx;
 
 ## Shader Inputs
 
+There are a few default shader inputs:
+
+```glsl
+// the resolution in pixels
+uniform vec2 resolution;
+
+// shader playback time in seconds
+uniform float time;
+```
+
 
 ## Todo
-mouse, date?, textures?
+mouse, date?, textures? demos
