@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var frame = document.getElementById('frame'),
+            q = new QuickShader({
+              shader: document.getElementById('some-shader').textContent,
+              width: frame.offsetWidth, 
+              height: frame.offsetHeight,
+              parentNode: frame
+            });
+        
+        q.play();
+        
+      });
+      
+    </script>
+    <style>
+      * {
+        margin:  0;
+        padding: 0;
+      }
+      
+      body {
+        background: #333; 
+        color : white;d
+      }
+      
+      #frame {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        top: 50%;
+        left : 50%;
+        -webkit-transform: translate(-50%,-50%);
+        -moz-transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      
+ 
+      #define NUM 10
+      float t = 0.;
+      float rand(vec2 co){
+               return fract(sin(dot(co.xy, vec2(12.9891,78.233))) * 43798.545);
+      }
+      
+      float ting(float i, vec2 uv, vec2 loc){
+        return smoothstep(0.1, 0.7 + i / 20.0, 1. - atan(distance(uv, loc)) * 7.);
+      }
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        float cl = 0.0;
+        float v = 2. - smoothstep(0.0, 1.0, 1.0 - atan(distance(uv, vec2(0.5, 0.5)))) * 2.;
+        
+        t = cos(time);
+
+        for (int i = 0; i < NUM; i++){
+          float fi = float(i);
+          float tin = ting(fi * 1.2 * cos(time * float(i - NUM / 2) * 0.3), uv, 
+                           vec2(0.1 * fi - 0.1 + 0.03 * cos(time + fi - 0.2), 
+                           rand(vec2(fi, 0.9))));
+          if (tin > cl) {
+           cl += smoothstep(cl, 1.01, tin);
+          }
+        }
+        float dl = 0.0;
+        
+        for (int i = 0; i < NUM; i++){
+          float fi = float(i);
+          float tin = ting(fi * 1.1 * cos(time * float(i - NUM / 2) * 0.3), uv, 
+                           vec2(0.1 * fi - 0.1 + 0.03 * cos(time + fi) + 0.01, 
+                           rand(vec2(fi, 0.9)) + 0.01));
+          if (tin > dl) {
+           dl += smoothstep(dl, 1.2, tin);
+          }
+        }
+        
+        float bl = 0.0;
+        
+        for (int i = 0; i < NUM; i++){
+          float fi = float(i);
+          float tin = ting(fi * 1.1 * cos(time * float(i - NUM / 2) * 0.3), uv, 
+                           vec2(0.1 * fi - 0.1 + 0.03 * cos(time + fi) + 0.01, 
+                           rand(vec2(fi, 0.9)) + 0.01));
+          if (tin > bl) {
+           bl += smoothstep(bl, 1.01, tin);
+          }
+        }
+        
+        
+        
+        cl = sin(acos(cl - 0.2));
+        dl = sin(acos(dl - 0.2));
+        
+        float j = sin( 5. * smoothstep(0.3, 1.2, dl))  ;
+
+        cl = max(bl, max(cl , j * 1.2));
+        
+        cl += rand(gl_FragCoord.xy + time) * 0.14;
+        cl -= v * 0.8;
+        
+        
+        gl_FragColor = vec4(cl * 1.2, cl , cl * 1.4 - bl * 0.5 , 1.0);
+      }
+      
+    </script>
+    
+  </body>
+</html>
