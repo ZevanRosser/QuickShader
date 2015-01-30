@@ -98,7 +98,10 @@
     
     size: function(width, height) {
       this.width = width;
-      this.height = height;
+      this.height = height
+      this.canvas.width = width;
+      this.canvas.height = height;
+      this.gl.viewport( 0, 0, this.width, this.height );
     },
     
     configureShader: function() {
@@ -161,6 +164,7 @@
 
       if (l2 !== null) { gl.uniform1f(l2, time); }
       if (l3 !== null) { gl.uniform2f(l3, this.width, this.height); }
+     
       
       gl.vertexAttribPointer(l1, 2, gl.FLOAT, false, 0, 0);
       
