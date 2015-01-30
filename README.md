@@ -2,7 +2,7 @@
 
 **QuickShader** speeds up the process of creating WebGL fragment shaders. 
 
-This code snippet covers all you need to know to use it...
+This code snippet and the explanation following it covers everything you need to know to get started:
 ```js
 var q = new QuickShader({
   // required fragment shader string
@@ -51,5 +51,8 @@ q.ctx;
     
 ```
 
-## shader inputs
-time, mouse, date?, textures?
+## Shader Inputs
+
+
+## Todo
+mouse, date?, textures?
