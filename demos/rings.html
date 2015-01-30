@@ -57,14 +57,14 @@
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         
-        float bcol = smoothstep(0.0, 1.0, 1.0 - (distance(vec2(0.5, 0.5), uv)));
+        float v = smoothstep(0.0, 1.0, 1.0 - (distance(vec2(0.5, 0.5), uv)));
         
         float a = atan(distance(uv, vec2(0.4 + 0.4 * sin(time / dmp), 0.4)));
         float b = atan(distance(uv, vec2(0.2, 0.55 )));
    
         float ttt = acos(sin(cos(a * 50.0) - sin(b * 32.0) * 10.0 ));
         
-        float cl = min(ttt, bcol);
+        float cl = min(ttt, v);
         
         cl += 0.6 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.5, 0.7))) - a * 0.5);
         

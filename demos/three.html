@@ -52,11 +52,11 @@
     
     <script id="some-shader" type="x-shader/x-fragment">
       
-      float dmp = 2.3;
-      #define NUM 10
+ 
+      #define NUM 11
       float t = 0.;
       float rand(vec2 co){
-        return fract(sin(dot(co.xy, vec2(12.9898,78.233))) * 43758.5453);
+        return fract(sin(dot(co.xy, vec2(12.9891,78.233))) * 43758.5453);
       }
       
       float ting(float i, vec2 uv, vec2 loc){
@@ -67,19 +67,21 @@
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         
         float cl = 0.0;
+         float v = 2. - smoothstep(0.0, 1.0, 1.0 - atan(distance(vec2(0.5, 0.5), uv))) * 2.;
         
         t = cos(time);
 
         for (int i = 0; i < NUM; i++){
-          float tin = ting(float(i) * 1.2 * cos(time * float(i - NUM / 2) * 0.4), uv, vec2(0.1 * float(i), rand(vec2(float(i), 0.9) )));
+          float tin = ting(float(i) * 1.2 * cos(time * float(i - NUM / 2) * 0.3), uv, 
+                           vec2(0.1 * float(i) - 0.1 + 0.03 * cos(time + float(i)), rand(vec2(float(i), 0.9) )));
           if (tin > cl) {
-           cl += smoothstep(cl, 1.1, tin);
+           cl += smoothstep(cl, 1.2, tin);
           }
         }
         
-        cl = sin(acos(cl - 0.2));
+        cl = sin(acos(cl - 0.2 ))  + rand(gl_FragCoord.xy + time) * 0.2 - v * 0.5;
 
-        gl_FragColor = vec4(cl, cl, cl, 1.0);
+        gl_FragColor = vec4(cl * 0.94, cl , cl * 0.9, 1.0);
       }
       
     </script>
