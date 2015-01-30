@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -53,15 +54,31 @@
       uniform vec2 resolution;
       uniform float time;
       uniform sampler2D tex0;
-      void main(void) {
-        vec2 uv = gl_FragCoord.xy / resolution.xy;
-        
-        float d = smoothstep(0.0, 0.4, atan(distance(uv , vec2(0.5, 0.5 + 0.5 * cos(time)))));
-        
-        vec3 col = vec3(abs(cos(time)), d, 0.0);z
-        
-        gl_FragColor = vec4(col,1.0);
-      }
+      void main(void)
+{
+  vec2 uv = gl_FragCoord.xy / resolution.xy;
+     
+    
+    float lines = atan(uv.y - 0.5,uv.x - 0.1);
+    lines += atan(uv.y - 0.75,uv.x - 0.5);
+    lines += atan(uv.y + 0.8,uv.x - 0.5);
+    lines += atan(uv.x - 0.5,uv.y - 0.5);
+    lines += atan(uv.x - 0.8,uv.y - 0.6);
+    lines += atan(uv.y - 0.85, 1.0-uv.x - 0.2);
+    
+    lines /= 5.0;
+    
+    float allLines = cos((lines + time * 0.5));
+    
+    uv.y /= (resolution.x)/resolution.y;   
+    
+    float circs = smoothstep(0.0, 0.5, length(uv - vec2(0.1, 0.25)));
+    circs += smoothstep(0.0, 0.2, distance(uv , vec2(0.8, 0.3)));
+    
+    float c = acos(distance(cos(circs * 1.5), allLines));
+    
+  gl_FragColor = vec4(c * 0.8,c * 0.9, c,1.0);
+}
     </script>
     
   </body>

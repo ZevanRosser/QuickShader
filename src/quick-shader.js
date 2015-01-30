@@ -45,7 +45,16 @@
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
       
-      this.configureShader();
+      var error = this.configureShader();
+      if (error) {
+        this.destroy();
+        if (this.parentNode) {
+         var pre = document.createElement('pre');
+         pre.innerHTML = error;
+         this.parentNode.appendChild(pre); 
+        }
+        return; 
+      }
       this.size(this.width, this.height);
       
       this.run = this.run.bind(this);
@@ -64,6 +73,8 @@
     },
     
     play: function() {
+      if (this.error) return;
+        
       this.totalPauseTime += this.pauseOffset;
       this.paused = false;
       
@@ -101,6 +112,16 @@
       
       gl.compileShader(vs);
       gl.compileShader(fs);
+      
+      
+       if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS))
+        {
+          var infoLog = gl.getShaderInfoLog(fs);
+          gl.deleteProgram( tmpProgram );
+          this.error = true;
+          return 'shader-error: \n' + infoLog;
+        }
+      
       
       gl.attachShader(tmpProgram, vs);
       gl.attachShader(tmpProgram, fs);
@@ -151,7 +172,7 @@
         gl.activeTexture(gl.TEXTURE0); 
         gl.bindTexture(gl.TEXTURE_2D, this.mTexture); 
       }
-      */
+      */ 
       
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       gl.disableVertexAttribArray(l1);
