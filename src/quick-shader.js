@@ -24,6 +24,8 @@
       this.parentNode.appendChild(this.canvas);
     }
     
+    this.pauseOffset = 0;
+    
     this.init(); 
   };
   
@@ -49,13 +51,14 @@
     },
     
     play: function() {
-     
+      
       if (this.pauseOffset) {
         this.pauseOffset = (new Date()).getTime() - this.startTime - this.pauseOffset;
       } else {
         this.pauseOffset = 0; 
         this.startTime = (new Date()).getTime(); 
       }
+      
       cancelAnimationFrame(this.animationId);
       this.run();
     },
@@ -66,7 +69,7 @@
     },
     
     pause: function() {
-      this.pauseOffset = (new Date()).getTime() - this.startTime;
+      this.pauseOffset = (new Date()).getTime() - this.startTime +  this.pauseOffset;
       cancelAnimationFrame(this.animationId);
     },
     

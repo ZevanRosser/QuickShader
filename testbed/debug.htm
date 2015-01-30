@@ -24,15 +24,16 @@
         };
         
         
-        // q.canvas
-        // q.ctx = q.gl
-        // q.size(width, height)
+        // q.canvas X
+        // q.ctx = q.gl X
+        // q.size(width, height) ? maybe resize canvas
+        // canvas 100% thing?
         
-        // q.play();
-        // q.pause();
-        // q.render(t = 0);
+        // q.play(); X
+        // q.pause(); X
+        // q.render(t = 0 ); X
         
-        // document.body.appendChild(q.canvas);
+        // document.body.appendChild(q.canvas); X
         
         
       });
@@ -53,8 +54,13 @@
       uniform float time;
       uniform sampler2D tex0;
       void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
         
-        vec3 col = vec3(abs(cos(time)), 0.0, 0.0);
+        float d = smoothstep(0.0, 0.4, atan(distance(uv , vec2(0.5, 0.5 + 0.5 * cos(time)))));
+        
+        
+        
+        vec3 col = vec3(abs(cos(time)), d, 0.0);
         
         gl_FragColor = vec4(col,1.0);
       }
