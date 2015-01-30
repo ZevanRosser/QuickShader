@@ -1,12 +1,14 @@
 (function() {
   
-  var header = [
-    '#ifdef GL_ES\n',
-    'precision highp float;\n',
-    '#endif\n',
-    'uniform vec2 resolution;\n',
-    'uniform float time;\n',
-    'uniform sampler2D tex0;\n'].join('');
+  var vertexShader = 'attribute vec2 pos;void main(){gl_Position=vec4(pos.x,pos.y,0.0,1.00);}',
+      header = [
+        '#ifdef GL_ES\n',
+        'precision highp float;\n',
+        '#endif\n',
+        'uniform vec2 resolution;\n',
+        'uniform float time;\n',
+        'uniform sampler2D tex0;\n'].join('');
+      
   
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
   // by Jeremy Burns https://github.com/jaburns
@@ -64,9 +66,8 @@
         }
         return; 
       }
-      this.size(this.width, this.height);
       
-      this.run = this.run.bind(this);
+      this.size(this.width, this.height);
     },
     
     destroy: function() {
@@ -96,13 +97,12 @@
     run: function() {
       var time = (+new Date() - this.startTime - this.totalPauseTime) / 1000;
       this.render(time) 
-      this.animationId = requestAnimationFrame( this.run );
+      this.animationId = requestAnimationFrame( this.run.bind(this) );
     },
     
     pause: function() {
       this.paused = true;
       this.pauseTime = +new Date();
-       
     },
     
     size: function(width, height) {
@@ -115,39 +115,38 @@
     
     configureShader: function() {
       var gl = this.gl,
-          tmpProgram = gl.createProgram(),
+          tempProgram = gl.createProgram(),
           vs = gl.createShader(gl.VERTEX_SHADER),
-          fs = gl.createShader(gl.FRAGMENT_SHADER);
+          fs = gl.createShader(gl.FRAGMENT_SHADER), 
+          infoLog;
       
-      gl.shaderSource(vs, 'attribute vec2 pos;void main(){gl_Position=vec4(pos.x,pos.y,0.0,1.00);}');
+      gl.shaderSource(vs, vertexShader);
       gl.shaderSource(fs, this.shader);
       
       gl.compileShader(vs);
       gl.compileShader(fs);
       
       
-       if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS))
-        {
-          var infoLog = gl.getShaderInfoLog(fs);
-          gl.deleteProgram( tmpProgram );
-          this.error = true;
-          return 'shader-error: \n' + infoLog;
-        }
+      if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+        infoLog = gl.getShaderInfoLog(fs);
+        gl.deleteProgram( tempProgram );
+        this.error = true;
+        return 'shader-error: \n' + infoLog;
+      }
       
-      
-      gl.attachShader(tmpProgram, vs);
-      gl.attachShader(tmpProgram, fs);
+      gl.attachShader(tempProgram, vs);
+      gl.attachShader(tempProgram, fs);
       
       gl.deleteShader(vs);
       gl.deleteShader(fs);
       
-      gl.linkProgram(tmpProgram);
+      gl.linkProgram(tempProgram);
       
       if (this.shaderProgram) {
         gl.deleteProgram(this.shaderProgram);
       }
       
-      this.shaderProgram = tmpProgram;
+      this.shaderProgram = tempProgram;
     },
     
     render: function(time) {
@@ -155,11 +154,11 @@
       time = time || 0;
       
       if (this.paused){
-        this.pauseOffset = (+new Date() - this.pauseTime);
+        this.pauseOffset = +new Date() - this.pauseTime;
         return;
       }
       
-      gl.viewport( 0, 0, this.width, this.height );
+      gl.viewport(0, 0, this.width, this.height);
       
       gl.useProgram(this.shaderProgram);
       
@@ -173,7 +172,6 @@
 
       if (l2 !== null) { gl.uniform1f(l2, time); }
       if (l3 !== null) { gl.uniform2f(l3, this.width, this.height); }
-     
       
       gl.vertexAttribPointer(l1, 2, gl.FLOAT, false, 0, 0);
       
