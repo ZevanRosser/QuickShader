@@ -52,32 +52,27 @@
     
     <script id="some-shader" type="x-shader/x-fragment">
       
-      float dmp = 2.0;
-      
-      float rand(vec2 co){
-        return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-      }
+      float dmp = 2.3;
       
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         
-       
-   
         float bcol = smoothstep(0.0, 1.0, 1.0 - (distance(vec2(0.5, 0.5), uv)));
         
         float a = atan(distance(uv, vec2(0.4 + 0.4 * sin(time / dmp), 0.4)));
-        float b = atan(distance(uv, vec2(0.2, 0.5 )));
+        float b = atan(distance(uv, vec2(0.2, 0.55 )));
    
+        float ttt = acos(sin(cos(a * 50.0) - sin(b * 32.0) * 10.0 ));
         
-        float cl = min(acos(sin(cos(a * 50.0) - sin(b * 30.0) * 10.0)), bcol);
+        float cl = min(ttt, bcol);
         
-        cl += 0.8 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.5, 0.7))) - a * 0.4);
+        cl += 0.6 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.5, 0.7))) - a * 0.5);
         
-         cl += 0.5 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.4, 0.4))) - a * 0.1);
+        cl = cl - 0.6 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.4, 0.7))) - a * 0.25);
         
+        cl += smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.4, 0.3))) - a * 0.15);
         
-        
-        
+
         gl_FragColor = vec4(cl * 0.8, cl * 0.9, cl, 1.0);
       }
       
