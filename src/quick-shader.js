@@ -9,19 +9,18 @@
         'uniform float time;\n',
         'uniform sampler2D tex0;\n'].join('');
       
-  
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
   // by Jeremy Burns https://github.com/jaburns
   
   window.QuickShader = function(params) {
     
+    if (!params.shader){
+      console.warn('You must specify a fragment shader'); 
+    }
+    
     this.width = params.width || 400;
     this.height = params.height || 400;
     this.shader = header + params.shader;
-    
-    if (!this.shader){
-      console.warn('You must specify a fragment shader'); 
-    }
     
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;

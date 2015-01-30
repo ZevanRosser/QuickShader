@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var frame = document.getElementById('frame'),
+            q = new QuickShader({
+              shader: document.getElementById('some-shader').textContent,
+              width: frame.offsetWidth, 
+              height: frame.offsetHeight,
+              parentNode: frame
+            });
+        
+        q.play();
+        
+      });
+      
+    </script>
+    <style>
+      * {
+        margin:  0;
+        padding: 0;
+      }
+      
+      body {
+        background: #333; 
+        color : white;d
+      }
+      
+      #frame {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        top: 50%;
+        left : 50%;
+        -webkit-transform: translate(-50%,-50%);
+        -moz-transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      
+      float dmp = 2.0;
+      
+      float rand(vec2 co){
+        return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+      }
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+       
+   
+        float bcol = smoothstep(0.0, 1.0, 1.0 - (distance(vec2(0.5, 0.5), uv)));
+        
+        float a = atan(distance(uv, vec2(0.4 + 0.4 * sin(time / dmp), 0.4)));
+        float b = atan(distance(uv, vec2(0.2, 0.5 )));
+   
+        
+        float cl = min(acos(sin(cos(a * 50.0) - sin(b * 30.0) * 10.0)), bcol);
+        
+        cl += 0.8 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.5, 0.7))) - a * 0.4);
+        
+         cl += 0.5 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.4, 0.4))) - a * 0.1);
+        
+        
+        
+        
+        gl_FragColor = vec4(cl * 0.8, cl * 0.9, cl, 1.0);
+      }
+      
+    </script>
+    
+  </body>
+</html>
