@@ -43,7 +43,7 @@
     constructor: QuickShader, 
     
     init: function() { 
-      var gl, vertices;
+      var gl, vertices, error;
       
       gl = this.gl = this.ctx = this.canvas.getContext('experimental-webgl');
     
@@ -53,7 +53,8 @@
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
       
-      var error = this.configureShader();
+      error = this.configureShader();
+      
       if (error) {
         this.destroy();
         if (this.parentNode) {
