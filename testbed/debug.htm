@@ -10,8 +10,8 @@
         
         var q = new QuickShader({
           shader: document.getElementById('some-shader').textContent,
-          width: 100, 
-          height: 100,
+          width: 400, 
+          height: 400,
           parentNode: '#frame'
         });
         
@@ -19,17 +19,16 @@
         
         var t = true;
         document.onclick = function() {
-          // t ? q.pause() : q.play();
+          t ? q.pause() : q.play();
           t = !t;
-          q.size(400, 400);
+          // q.size(400, 400);
         };
-        
         
         
         
         // q.canvas X
         // q.ctx = q.gl X
-        // q.size(width, height) ? maybe resize canvas
+        // q.size(width, height) ? maybe resize canvas X
         // canvas 100% thing?
         
         // q.play(); X
@@ -42,6 +41,10 @@
       });
     </script>
     <style>
+      * {
+        margin : 0px; 
+        padding: 0px;
+      }
     </style>
   </head>
   <body>
@@ -49,13 +52,8 @@
     <div id="frame"></div>
     
     <script id="some-shader" type="x-shader/x-fragment">
-      #ifdef GL_ES
-        precision highp float;
-      #endif
-        
-      uniform vec2 resolution;
-      uniform float time;
-      uniform sampler2D tex0;
+      
+      
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         

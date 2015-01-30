@@ -1,16 +1,24 @@
 (function() {
   
+  var header = [
+    '#ifdef GL_ES\n',
+    'precision highp float;\n',
+    '#endif\n',
+    'uniform vec2 resolution;\n',
+    'uniform float time;\n',
+    'uniform sampler2D tex0;\n'].join('');
+  
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
   // by Jeremy Burns https://github.com/jaburns
   
   window.QuickShader = function(params) {
     
-    this.width = params.width || 320;
-    this.height = params.height || 240;
-    this.shader = params.shader;
+    this.width = params.width || 400;
+    this.height = params.height || 400;
+    this.shader = header + params.shader;
     
     if (!this.shader){
-      console.warn('You must specify a valid fragment shader'); 
+      console.warn('You must specify a fragment shader'); 
     }
     
     this.canvas = document.createElement('canvas');
@@ -37,7 +45,7 @@
     init: function() { 
       var gl, vertices;
       
-      gl = this.gl = this.ctx = this.canvas.getContext("experimental-webgl");
+      gl = this.gl = this.ctx = this.canvas.getContext('experimental-webgl');
     
       vertices = new Float32Array([ -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0 ]);
       
@@ -110,7 +118,7 @@
           vs = gl.createShader(gl.VERTEX_SHADER),
           fs = gl.createShader(gl.FRAGMENT_SHADER);
       
-      gl.shaderSource(vs, "attribute vec2 pos;void main(){gl_Position=vec4(pos.x,pos.y,0.0,1.00);}");
+      gl.shaderSource(vs, 'attribute vec2 pos;void main(){gl_Position=vec4(pos.x,pos.y,0.0,1.00);}');
       gl.shaderSource(fs, this.shader);
       
       gl.compileShader(vs);
@@ -154,11 +162,11 @@
       
       gl.useProgram(this.shaderProgram);
       
-      l1 = gl.getAttribLocation(this.shaderProgram, "pos");
-      l2 = gl.getUniformLocation(this.shaderProgram, "time");
-      l3 = gl.getUniformLocation(this.shaderProgram, "resolution");
+      l1 = gl.getAttribLocation(this.shaderProgram, 'pos');
+      l2 = gl.getUniformLocation(this.shaderProgram, 'time');
+      l3 = gl.getUniformLocation(this.shaderProgram, 'resolution');
       
-      // t0 = gl.getUniformLocation(this.shaderProgram, "tex0");
+      // t0 = gl.getUniformLocation(this.shaderProgram, 'tex0');
       
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
 
