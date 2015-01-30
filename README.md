@@ -25,9 +25,9 @@ q.play();
 q.pause();
 
 // change the size of the canvas (updates `width` and `height` properties)
-q.size(500 300);
+q.size(500, 300);
 
-// reset everyting include `time` value
+// reset everyting including `time` value
 q.reset();
 
 // destroy everything and remove the canvas from the DOM
