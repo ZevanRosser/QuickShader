@@ -13,6 +13,7 @@ var q = new QuickShader({
   height: 350,
   
   // optionally append to an existing node
+  // (can be a selector or an actual node)
   parentNode: '#frame'
 });
 
