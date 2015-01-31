@@ -62,8 +62,12 @@ uniform vec2 resolution;
 
 // shader playback time in seconds
 uniform float time;
+
+// the milliseconds at the start of the program
+// ranging from 0.0 to 1.0 (useful for random seeds)
+uniform float millis;
 ```
 
 
 ## Todo
-mouse, date?, textures? demos
+mouse, textures? demos
