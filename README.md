@@ -1,9 +1,12 @@
 # QuickShader
 
-**QuickShader** speeds up the process of creating WebGL fragment shaders. 
+**QuickShader** speeds up the process of creating WebGL fragment shaders and displaying them in the browser.
 
-This code snippet and the explanation following it covers everything you need to know to get started:
+## Docs
+The following code snippets and descriptions contain everything you need to know to use **QuickShader**. Be sure to check out the `demos` folder for more examples.
+
 ```js
+// make a `QuickShader` instance
 var q = new QuickShader({
   // required fragment shader string
   shader: document.getElementById('some-shader').textContent,
@@ -60,7 +63,7 @@ There are a few default shader inputs:
 // the resolution in pixels
 uniform vec2 resolution;
 
-// the mouse location inside the canvas
+// the mouse location in pixels inside the canvas
 uniform vec2 mouse;
 
 // shader playback time in seconds
@@ -72,5 +75,35 @@ uniform float millis;
 ```
 
 
-## Todo
-mouse, textures? demos
+## Textures
+
+You can add as many textures to your shader as you like. You can link `image` and/or `canvas` nodes and **QuickShader** does the rest:
+
+```js
+var img = new Image();
+        
+  img.src = 'coins.jpg';
+
+  img.addEventListener('load', function() {
+          
+  var q = new QuickShader({
+    shader: document.getElementById('some-shader').textContent,
+    width: 400, 
+    height: 400,
+    parentNode: '#frame', 
+    // point to the image and give it a name
+    textures: [
+      {name: 'coins', src: img}
+    ]
+  });
+  ```
+  
+The `name` property of each texture you pass in will be used added as a `sampler2D` to your shader program automatically. So after the above code, if you want to display your image in a shader it would look like this:
+
+```glsl
+void main(void) {
+  vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+  gl_FragColor = texture2D(coins,uv);
+}
+```
