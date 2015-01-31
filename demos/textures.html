@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        // preload some images
+        var images = ['coins.jpg', 'sketch.jpg'], 
+            textures = [],
+            imagesTotal = images.length, 
+            imagesLoaded = 0;
+        
+        images.forEach(function(src) {
+          var img = new Image();
+          img.src = src;
+          textures.push(img);
+          img.addEventListener('load', function() {
+            imagesLoaded++;
+            if (imagesLoaded === imagesTotal) {
+              start(); 
+            }
+          });
+        });
+     
+        var start = function() {
+          
+          var q = new QuickShader({
+            shader: document.getElementById('some-shader').textContent,
+            width: 400, 
+            height: 400,
+            parentNode: '#frame', 
+            // point to each image and give it a name
+            textures: [
+              {name: 'coins', src: textures[0]}, 
+              {name: 'sketch', src: textures[1]}
+            ]
+          });
+          
+          q.play();
+          
+        };
+        
+      });
+    </script>
+    <style>
+      * {
+        margin : 0px; 
+        padding: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+
+      void main()  {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        vec4 a = texture2D(coins, uv);
+        vec4 b = texture2D(sketch, uv);
+          
+        gl_FragColor = a / b;
+      }
+      
+    </script>
+    
+  </body>
+</html>
