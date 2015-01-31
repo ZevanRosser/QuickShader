@@ -20,6 +20,9 @@
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
   // by Jeremy Burns https://github.com/jaburns
   
+  // seen variations on this basic code floating around a bunch
+  // may even originally be from http://shadertoy.com
+  
   window.QuickShader = function(params) {
     
     if (!params.shader){
@@ -158,8 +161,8 @@
     },
     
     render: function(time) {
-      var gl = this.gl, l1, l2, l3, l4, l5, t0, 
-          rect;
+      var gl = this.gl, inputs = [], rect;
+      
       time = time || 0;
       
       if (this.paused){
@@ -171,33 +174,29 @@
       
       gl.useProgram(this.shaderProgram);
       
-      l1 = gl.getAttribLocation(this.shaderProgram, 'pos');
-      l2 = gl.getUniformLocation(this.shaderProgram, 'time');
-      l3 = gl.getUniformLocation(this.shaderProgram, 'resolution');
-      l4 = gl.getUniformLocation(this.shaderProgram, 'millis');
-      l5 = gl.getUniformLocation(this.shaderProgram, 'mouse');
+      inputs[0] = gl.getAttribLocation(this.shaderProgram, 'pos');
+      inputs[1] = gl.getUniformLocation(this.shaderProgram, 'time');
+      inputs[2] = gl.getUniformLocation(this.shaderProgram, 'resolution');
+      inputs[3] = gl.getUniformLocation(this.shaderProgram, 'millis');
+      inputs[4] = gl.getUniformLocation(this.shaderProgram, 'mouse');
       
       // t0 = gl.getUniformLocation(this.shaderProgram, 'tex0');
       
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
-
-      if (l2 !== null) { gl.uniform1f(l2, time); }
-      if (l3 !== null) { gl.uniform3f(l3, this.width, this.height, 1.0); }
-      if (l4 !== null) { gl.uniform1f(l4, this.millis); }
+      gl.uniform1f(inputs[1], time);
+      gl.uniform3f(inputs[2], this.width, this.height, 1.0);
+      gl.uniform1f(inputs[3], this.millis);
       
       
       rect = this.canvas.getBoundingClientRect();
-      mouseX = (pageX - rect.left) / this.width;
-      mouseY = (pageY - rect.top) / this.width;
+      mouseX = pageX - rect.left;
+      mouseY = pageY - rect.top;
       
-      console.log(mouseX);
+      gl.uniform2f(inputs[4], mouseX, mouseY);
       
-      if (l5 !== null) { gl.uniform2f(l5, mouseX, mouseY); }
-
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
+      gl.vertexAttribPointer(inputs[0], 2, gl.FLOAT, false, 0, 0);
       
-      gl.vertexAttribPointer(l1, 2, gl.FLOAT, false, 0, 0);
-      
-      gl.enableVertexAttribArray(l1);
+      gl.enableVertexAttribArray(inputs[0]);
       
       /*
       if (t0 !== null) { 
@@ -208,7 +207,7 @@
       */ 
       
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      gl.disableVertexAttribArray(l1);
+      gl.disableVertexAttribArray(inputs[0]);
     }
     
   };
