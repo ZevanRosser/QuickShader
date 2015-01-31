@@ -1,13 +1,20 @@
 (function() {
   
+  var pageX = 0, pageY  = 0;
+  document.addEventListener('mousemove', function(e) {
+    pageX = e.pageX;
+    pageY = e.pageY;
+  });
+  
   var vertexShader = 'attribute vec2 pos;void main(){gl_Position=vec4(pos.x,pos.y,0.0,1.00);}',
       header = [
         '#ifdef GL_ES\n',
         'precision highp float;\n',
         '#endif\n',
-        'uniform vec2 resolution;\n',
+        'uniform vec3 resolution;\n',
         'uniform float time;\n',
         'uniform float millis;\n',
+        'uniform vec2 mouse;\n',
         'uniform sampler2D tex0;\n'].join('');
       
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
@@ -151,7 +158,8 @@
     },
     
     render: function(time) {
-      var gl = this.gl, l1, l2, l3, l4, t0;
+      var gl = this.gl, l1, l2, l3, l4, l5, t0, 
+          rect;
       time = time || 0;
       
       if (this.paused){
@@ -167,14 +175,25 @@
       l2 = gl.getUniformLocation(this.shaderProgram, 'time');
       l3 = gl.getUniformLocation(this.shaderProgram, 'resolution');
       l4 = gl.getUniformLocation(this.shaderProgram, 'millis');
+      l5 = gl.getUniformLocation(this.shaderProgram, 'mouse');
       
       // t0 = gl.getUniformLocation(this.shaderProgram, 'tex0');
       
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
 
       if (l2 !== null) { gl.uniform1f(l2, time); }
-      if (l3 !== null) { gl.uniform2f(l3, this.width, this.height); }
+      if (l3 !== null) { gl.uniform3f(l3, this.width, this.height, 1.0); }
       if (l4 !== null) { gl.uniform1f(l4, this.millis); }
+      
+      
+      rect = this.canvas.getBoundingClientRect();
+      mouseX = (pageX - rect.left) / this.width;
+      mouseY = (pageY - rect.top) / this.width;
+      
+      console.log(mouseX);
+      
+      if (l5 !== null) { gl.uniform2f(l5, mouseX, mouseY); }
+
       
       gl.vertexAttribPointer(l1, 2, gl.FLOAT, false, 0, 0);
       
