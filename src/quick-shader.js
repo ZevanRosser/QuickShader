@@ -34,7 +34,7 @@
     this.shader = params.shader;
     
     this.textureCode = '';
-    this.texturesIn = params.textures;
+    this.texturesIn = params.textures || [];
     this.textures = [];
     
     this.canvas = document.createElement('canvas');
@@ -145,7 +145,6 @@
       gl.compileShader(vs);
       gl.compileShader(fs);
       
-      
       if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
         infoLog = gl.getShaderInfoLog(fs);
         gl.deleteProgram( tempProgram );
@@ -169,8 +168,12 @@
     },
     
     render: function(time) {
-      var gl = this.gl, inputs = [], rect, textureNum, texureInputs = [];
-      
+      var gl = this.gl, 
+          inputs = [], 
+          textureNum = this.textures.length,
+          tex,
+          rect;
+
       time = time || 0;
       
       if (this.paused){
@@ -182,24 +185,23 @@
       
       gl.useProgram(this.shaderProgram);
       
-      inputs[0] = gl.getAttribLocation(this.shaderProgram, 'pos');
-      inputs[1] = gl.getUniformLocation(this.shaderProgram, 'time');
-      inputs[2] = gl.getUniformLocation(this.shaderProgram, 'resolution');
-      inputs[3] = gl.getUniformLocation(this.shaderProgram, 'millis');
+      inputs[0] = gl.getAttribLocation(this.shaderProgram,'pos');
+      inputs[1] = gl.getUniformLocation(this.shaderProgram,'time');
+      inputs[2] = gl.getUniformLocation(this.shaderProgram,'resolution');
+      inputs[3] = gl.getUniformLocation(this.shaderProgram,'millis');
       inputs[4] = gl.getUniformLocation(this.shaderProgram, 'mouse');
-      
-      // t0 = gl.getUniformLocation(this.shaderProgram, 'tex0');
-      
-      textureNum = this.textures.length;
-      
+
       for (var i = 0; i < textureNum; i++){
-        texureInputs[i] = gl.getUniformLocation(this.shaderProgram,  this.textures[i].name);
+        tex = gl.getUniformLocation(this.shaderProgram, this.textures[i].name);
+
+        gl.uniform1i(tex, i); 
+        gl.activeTexture(gl['TEXTURE' + i]); 
+        gl.bindTexture(gl.TEXTURE_2D, this.textures[i].texture);
       }
       
       gl.uniform1f(inputs[1], time);
       gl.uniform3f(inputs[2], this.width, this.height, 1.0);
       gl.uniform1f(inputs[3], this.millis);
-      
       
       rect = this.canvas.getBoundingClientRect();
       mouseX = pageX - rect.left;
@@ -212,27 +214,12 @@
       
       gl.enableVertexAttribArray(inputs[0]);
       
-      /*
-      if (t0 !== null) { 
-        gl.uniform1i(t0, 0 ); 
-        gl.activeTexture(gl.TEXTURE0); 
-        gl.bindTexture(gl.TEXTURE_2D, this.mTexture); 
-      }
-      */ 
-      
-      for (var i = 0; i < textureNum; i++){
-        gl.uniform1i(texureInputs[i], i); 
-        gl.activeTexture(gl['TEXTURE' + i]); 
-        gl.bindTexture(gl.TEXTURE_2D, this.textures[i].texture);
-      }
-      
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       gl.disableVertexAttribArray(inputs[0]);
     }, 
     
     addTexture: function(info) {
       
-  
       var gl = this.gl, 
           img = info.src,
           name = info.name,
@@ -241,14 +228,13 @@
       this.textureCode += [ 'uniform sampler2D ', name, ';\n' ].join('');
       
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); 
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
       gl.generateMipmap(gl.TEXTURE_2D);
-      
       gl.bindTexture(gl.TEXTURE_2D, null);
+      
       this.textures.push({name: name, texture: texture});
     }
     
