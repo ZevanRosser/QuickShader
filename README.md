@@ -60,6 +60,9 @@ There are a few default shader inputs:
 // the resolution in pixels
 uniform vec2 resolution;
 
+// the mouse location inside the canvas
+uniform vec2 mouse;
+
 // shader playback time in seconds
 uniform float time;
 
