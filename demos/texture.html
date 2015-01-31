@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var img = new Image();
+        
+        img.src = 'coins.jpg';
+
+        img.addEventListener('load', function() {
+          
+          var q = new QuickShader({
+            shader: document.getElementById('some-shader').textContent,
+            width: 400, 
+            height: 400,
+            parentNode: '#frame', 
+            // point to the image and give it a name
+            textures: [
+              {name: 'coins', src: img}
+            ]
+          });
+          
+          q.play();
+          
+        });
+        
+      });
+    </script>
+
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+
+      float waveyness = 30.0;
+      float dampSpeed = 0.3;
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        uv.y = uv.y + 0.01 * sin((uv.x + time * dampSpeed) * waveyness); 
+        
+        gl_FragColor = texture2D(coins,uv);
+      }
+      
+    </script>
+    
+  </body>
+</html>
