@@ -7,6 +7,7 @@
         '#endif\n',
         'uniform vec2 resolution;\n',
         'uniform float time;\n',
+        'uniform float millis;\n',
         'uniform sampler2D tex0;\n'].join('');
       
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
@@ -67,6 +68,7 @@
       }
       
       this.size(this.width, this.height);
+      this.millis = new Date().getMilliseconds() / 1000;
     },
     
     destroy: function() {
@@ -149,7 +151,7 @@
     },
     
     render: function(time) {
-      var gl = this.gl, l1, l2, l3, t0;
+      var gl = this.gl, l1, l2, l3, l4, t0;
       time = time || 0;
       
       if (this.paused){
@@ -164,6 +166,7 @@
       l1 = gl.getAttribLocation(this.shaderProgram, 'pos');
       l2 = gl.getUniformLocation(this.shaderProgram, 'time');
       l3 = gl.getUniformLocation(this.shaderProgram, 'resolution');
+      l4 = gl.getUniformLocation(this.shaderProgram, 'millis');
       
       // t0 = gl.getUniformLocation(this.shaderProgram, 'tex0');
       
@@ -171,6 +174,7 @@
 
       if (l2 !== null) { gl.uniform1f(l2, time); }
       if (l3 !== null) { gl.uniform2f(l3, this.width, this.height); }
+      if (l4 !== null) { gl.uniform1f(l4, this.millis); }
       
       gl.vertexAttribPointer(l1, 2, gl.FLOAT, false, 0, 0);
       
