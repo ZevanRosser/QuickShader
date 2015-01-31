@@ -20,7 +20,7 @@
   // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
   // by Jeremy Burns https://github.com/jaburns
   
-  // seen variations on this basic code floating around a bunch
+  // seen variations on this basic code floating around a bunch on github and elsewhere
   // may even originally be from http://shadertoy.com
   
   window.QuickShader = function(params) {
@@ -31,7 +31,11 @@
     
     this.width = params.width || 400;
     this.height = params.height || 400;
-    this.shader = header + params.shader;
+    this.shader = params.shader;
+    
+    this.textureCode = '';
+    this.texturesIn = params.textures;
+    this.textures = [];
     
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
@@ -64,6 +68,10 @@
       this.quadVBO = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+      
+      this.texturesIn.forEach(this.addTexture.bind(this));
+      
+      this.shader = [header, this.textureCode, this.shader].join('');
       
       error = this.configureShader();
       
@@ -161,7 +169,7 @@
     },
     
     render: function(time) {
-      var gl = this.gl, inputs = [], rect;
+      var gl = this.gl, inputs = [], rect, textureNum, texureInputs = [];
       
       time = time || 0;
       
@@ -181,6 +189,12 @@
       inputs[4] = gl.getUniformLocation(this.shaderProgram, 'mouse');
       
       // t0 = gl.getUniformLocation(this.shaderProgram, 'tex0');
+      
+      textureNum = this.textures.length;
+      
+      for (var i = 0; i < textureNum; i++){
+        texureInputs[i] = gl.getUniformLocation(this.shaderProgram,  this.textures[i].name);
+      }
       
       gl.uniform1f(inputs[1], time);
       gl.uniform3f(inputs[2], this.width, this.height, 1.0);
@@ -206,8 +220,36 @@
       }
       */ 
       
+      for (var i = 0; i < textureNum; i++){
+        gl.uniform1i(texureInputs[i], i); 
+        gl.activeTexture(gl['TEXTURE' + i]); 
+        gl.bindTexture(gl.TEXTURE_2D, this.textures[i].texture);
+      }
+      
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       gl.disableVertexAttribArray(inputs[0]);
+    }, 
+    
+    addTexture: function(info) {
+      
+  
+      var gl = this.gl, 
+          img = info.src,
+          name = info.name,
+          texture = gl.createTexture();
+      
+      this.textureCode += [ 'uniform sampler2D ', name, ';\n' ].join('');
+      
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); 
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      this.textures.push({name: name, texture: texture});
     }
     
   };
