@@ -47,7 +47,7 @@ q.destroy();
 
 // properies:
 
-// get the paused state (true when paused)
+// get the paused state (`true` when paused)
 q.paused;
 
 // current width and height
