@@ -42,6 +42,9 @@
     this.texturesIn = params.textures || [];
     this.textures = [];
     
+    this.inputCode = '';
+    this.inputs = params.inputs || [];
+    
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
@@ -77,7 +80,10 @@
       
       this.texturesIn.forEach(this.addTexture.bind(this));
       
-      this.shader = [header, this.textureCode, this.shader].join('');
+      this.inputs.forEach(this.addInput.bind(this));
+      
+      this.shader = [header, this.textureCode, this.inputCode, this.shader].join('');
+
       
       error = this.configureShader();
       
@@ -264,6 +270,10 @@
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       gl.disableVertexAttribArray(inputs[0]);
     }, 
+    
+    addInput: function(input) {
+      this.inputCode += [ input.type, ' ', input.name, ' = ', input.value, ';\n' ].join('');
+    },
     
     addTexture: function(info) {
       

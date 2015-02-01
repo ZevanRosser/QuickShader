@@ -36,6 +36,7 @@
   <body>
     
     <div id="frame"></div>
+    click on the black box
     
     <script id="some-shader" type="x-shader/x-fragment">
       
@@ -47,9 +48,9 @@
         vec4 c = vec4(0.0, 0.0, 0.0, 1.0);
 
         if (mouseDown) {
-          c.x = smoothstep(0.2, 0.1, distance(uv, mouse));
+          c.r = smoothstep(0.2, 0.1, distance(uv, mouse));
         } else {
-          c.y = smoothstep(0.2, 0.1, distance(uv, mouse));
+          c.g = smoothstep(0.2, 0.1, distance(uv, mouse));
         }
         
         gl_FragColor = c;

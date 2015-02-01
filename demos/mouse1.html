@@ -37,6 +37,8 @@
     
     <div id="frame"></div>
     
+    click on the black box
+    
     <script id="some-shader" type="x-shader/x-fragment">
       
       void main(void) {
@@ -45,15 +47,15 @@
         vec4 c = vec4(0.0, 0.0, 0.0, 1.0);
 
         if (mouseDown) {
-          c.y = 1.0;
+          c.r = 1.0;
         }
         
         if (mouseUp) {
-          c.x = 1.0;
+          c.g = 1.0;
         }
         
         if (mouseClicked) {
-          c.z = 1.0;
+          c.b = 1.0;
         }
         
         gl_FragColor = c;

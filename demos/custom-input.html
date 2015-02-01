@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var q = new QuickShader({
+          shader: document.getElementById('some-shader').textContent,
+          width: 400, 
+          height: 400,
+          parentNode: '#frame', 
+          inputs: [
+            {type: 'float', name: 'randX', value: Math.random()},
+            {type: 'float', name: 'randY', value: Math.random()}
+          ]
+        });
+        
+        q.play();
+      
+      });
+    </script>
+    
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    custom input to randomly position red blob
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      
+     
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        vec4 c = vec4(0.0, 0.0, 0.0, 1.0);
+
+        c.r = smoothstep(0.2, 0.1, distance(uv, vec2(randX, randY)));
+        
+        gl_FragColor = c;
+      }
+      
+    </script>
+    
+  </body>
+</html>
