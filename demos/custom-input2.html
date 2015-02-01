@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var range = document.getElementById('slider'),
+            q = new QuickShader({
+          shader: document.getElementById('some-shader').textContent,
+          width: 400, 
+          height: 400,
+          parentNode: '#frame', 
+          inputs: [
+            {type: 'float', name: 'xLoc', value: '0.0'}
+          ]
+        });
+        
+        q.play();
+        
+        q.update(function(inputs) {
+          inputs.xLoc = slider.value;
+        });
+
+      });
+    </script>
+    
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    drag the slider <br />
+    <input id='slider' type="range" min="0" max="1" step="0.01" value="0">
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        vec4 c = vec4(0.0, 0.0, 0.0, 1.0);
+
+        c.r = smoothstep(0.2, 0.1, distance(uv, vec2(xLoc, 0.5)));
+        
+        gl_FragColor = c;
+      }
+      
+    </script>
+    
+  </body>
+</html>

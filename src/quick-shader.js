@@ -1,7 +1,8 @@
 (function() {
   
   var pageX = 0, 
-      pageY  = 0;
+      pageY  = 0, 
+      noop = function(){};
   
   document.addEventListener('mousemove', function(e) {
     pageX = e.pageX;
@@ -43,7 +44,9 @@
     this.textures = [];
     
     this.inputCode = '';
-    this.inputs = params.inputs || [];
+    this.customData = {};
+    this.customInputs = params.inputs || [];
+    this.updateFunction = noop;
     
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
@@ -80,7 +83,7 @@
       
       this.texturesIn.forEach(this.addTexture.bind(this));
       
-      this.inputs.forEach(this.addInput.bind(this));
+      this.customInputs.forEach(this.addInput.bind(this));
       
       this.shader = [header, this.textureCode, this.inputCode, this.shader].join('');
 
@@ -209,10 +212,16 @@
       this.shaderProgram = tempProgram;
     },
     
+    update: function(updateFunction) {
+      this.updateFunction = updateFunction;
+    },
+    
     render: function(time) {
       var gl = this.gl, 
           inputs = [], 
           textureNum = this.textures.length,
+          customInputsLength = this.customInputs.length,
+          input,
           tex,
           rect;
 
@@ -237,6 +246,10 @@
       inputs[6] = gl.getUniformLocation(this.shaderProgram, 'mouseUp');
       inputs[7] = gl.getUniformLocation(this.shaderProgram, 'mouseClicked');
 
+      gl.uniform1f(inputs[1], time);
+      gl.uniform3f(inputs[2], this.width, this.height, 1.0);
+      gl.uniform1f(inputs[3], this.millis);
+      
       for (var i = 0; i < textureNum; i++){
         tex = gl.getUniformLocation(this.shaderProgram, this.textures[i].name);
 
@@ -245,10 +258,18 @@
         gl.bindTexture(gl.TEXTURE_2D, this.textures[i].texture);
       }
       
-      gl.uniform1f(inputs[1], time);
-      gl.uniform3f(inputs[2], this.width, this.height, 1.0);
-      gl.uniform1f(inputs[3], this.millis);
-      
+      this.updateFunction(this.customData);
+        
+      for (var i = 0; i < customInputsLength; i++) {
+        var customInput = this.customInputs[i];
+        input = gl.getUniformLocation(this.shaderProgram, customInput.name);
+        if (customInput.type === 'float') {
+          gl.uniform1f(input, this.customData[customInput.name]);
+        } else if (customInput.type === 'bool' || customInput.type === 'int') {
+          gl.uniform1i(input, this.customData[customInput.name]);
+        }
+      }
+   
       rect = this.canvas.getBoundingClientRect();
       mouseX = pageX - rect.left;
       mouseY = pageY - rect.top;
@@ -272,7 +293,8 @@
     }, 
     
     addInput: function(input) {
-      this.inputCode += [ input.type, ' ', input.name, ' = ', input.value, ';\n' ].join('');
+      this.inputCode += [ 'uniform ', input.type, ' ', input.name, ';\n' ].join('');
+      this.customData[input.name] = input.value;
     },
     
     addTexture: function(info) {
