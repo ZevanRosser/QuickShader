@@ -19,6 +19,13 @@
         
         q.play();
         
+        var resize = function() {
+          q.size(window.innerWidth, window.innerHeight);
+        };
+        
+        window.addEventListener('resize', resize);
+        resize();
+        
       });
       
     </script>
@@ -30,19 +37,13 @@
       
       body {
         background: #333; 
-        color : white;d
+        color : white;
+        overflow: hidden;
       }
       
       #frame {
         position: absolute;
-        width: 600px;
-        height: 600px;
-        top: 50%;
-        left : 50%;
-        -webkit-transform: translate(-50%,-50%);
-        -moz-transform: translate(-50%,-50%);
-        -ms-transform: translate(-50%,-50%);
-        transform: translate(-50%,-50%);
+        
       }
     </style>
   </head>
@@ -54,6 +55,9 @@
         
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
+        uv.y /= resolution.x / resolution.y;   
+        
+         
         
         float v = smoothstep(0.0, 1.0, 1.0 - distance(vec2(0.5, 0.5), uv));
         

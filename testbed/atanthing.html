@@ -62,7 +62,7 @@
         
         float allLines = cos((lines + time * 0.5));
         
-        uv.y /= (resolution.x)/resolution.y;   
+        uv.y /= resolution.x/resolution.y;   
         
         float circs = smoothstep(0.0, 0.5, length(uv - vec2(0.1, 0.25)));
         circs += smoothstep(0.0, 0.2, distance(uv, vec2(0.8, 0.3)));
