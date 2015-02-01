@@ -55,7 +55,7 @@ q.ctx;
     
 ```
 
-## Shader Inputs
+### Shader Inputs
 
 There are a few default shader inputs:
 
@@ -84,7 +84,7 @@ uniform bool mouseClicked;
 ```
 
 
-## Textures
+### Textures
 
 You can add as many textures to your shader as you like. You can link `image` and/or `canvas` nodes and **QuickShader** does the rest:
 
@@ -116,3 +116,26 @@ void main(void) {
   gl_FragColor = texture2D(coins,uv);
 }
 ```
+
+### Custom Inputs
+You can bring in values from javascript into your shader as variables. For instance:
+
+```js
+ var q = new QuickShader({
+    shader: document.getElementById('some-shader').textContent,
+    width: 400, 
+    height: 400,
+    parentNode: '#frame', 
+    inputs: [
+      {type: 'float', name: 'randX', value: Math.random()},
+      {type: 'float', name: 'randY', value: Math.random()}
+    ]
+  });
+```
+Will define two variables in your shader like so:
+
+```glsl
+float randX = 0.3623482734; // some random value from javascript
+float randY = 0.23324i2342; // some other random value
+```
+

@@ -1,0 +1,27 @@
+{
+  "name": "quick-shader",
+  "version": "1.0.0",
+  "description": "Quickly create shaders for WebGL",
+  "main": "Gruntfile.js",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-uglify": "^0.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZevanRosser/QuickShader.git"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "shader",
+    "WebGL"
+  ],
+  "author": "Zevan Rosser",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ZevanRosser/QuickShader/issues"
+  },
+  "homepage": "https://github.com/ZevanRosser/QuickShader"
+}
