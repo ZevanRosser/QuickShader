@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var frame = document.getElementById('frame'),
+            q = new QuickShader({
+              shader: document.getElementById('some-shader').textContent,
+              width: frame.offsetWidth, 
+              height: frame.offsetHeight,
+              parentNode: frame
+            });
+        
+        q.play();
+        
+        var resize = function() {
+          q.size(window.innerWidth, window.innerHeight);
+        };
+        
+        window.addEventListener('resize', resize);
+        resize();
+        
+      });
+      
+    </script>
+    <style>
+      * {
+        margin:  0;
+        padding: 0;
+      }
+      
+      body {
+        background: #333; 
+        color : white;
+        overflow: hidden;
+      }
+      
+      #frame {
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    
+    
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      
+      float co = 1.0;
+      float cloud(vec2 uv, vec2 loc) {
+        vec2 n = uv + loc * 7.;
+        float x = n.x;
+        float y = n.y;
+        float x2 = x * x;
+        return max((x*(x - 0.3) + y*y), (x2 -cos(y + time * co) * y + cos(x) * y )) * 8.;
+      }
+        
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+ 
+        co = 1.0;
+        float a = cloud(uv, vec2(-0.06, -0.07));
+        a = 1.0-(a * 2.);
+        
+        co = 0.4;
+        float b = cloud(uv, vec2(-0.06, -0.05));
+        
+        
+         co = 1.4;
+        float c = cloud(uv, vec2(-0.01, -0.1));
+        
+        
+        float cl = a * b * c;
+        
+        gl_FragColor = vec4(cl, cl, cl, 1.0);
+      }
+      
+    </script>
+    
+  </body>
+</html>

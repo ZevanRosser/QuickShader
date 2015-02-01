@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var frame = document.getElementById('frame'),
+            q = new QuickShader({
+              shader: document.getElementById('some-shader').textContent,
+              width: frame.offsetWidth, 
+              height: frame.offsetHeight,
+              parentNode: frame
+            });
+        
+        q.play();
+        
+        var resize = function() {
+          q.size(window.innerWidth, window.innerHeight);
+        };
+        
+        window.addEventListener('resize', resize);
+        resize();
+        
+      });
+      
+    </script>
+    <style>
+      * {
+        margin:  0;
+        padding: 0;
+      }
+      
+      body {
+        background: #333; 
+        color : white;
+        overflow: hidden;
+      }
+      
+      #frame {
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        gl_FragColor = vec4(uv, sin(time), 1.0);
+      }
+      
+    </script>
+    
+  </body>
+</html>

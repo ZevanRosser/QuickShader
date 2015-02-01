@@ -68,6 +68,12 @@
     this.pauseOffset = 0;
     this.totalPauseTime = 0;
     
+    // create an alias for play mainly because
+    // codepen renames any function call to `play()` to
+    // `doNotPlay()` not exactly sure why, maybe for audio/video
+    // anyway here is an alias for use on codepen
+    this.start = this.play;
+    
     this.init(); 
   };
   
