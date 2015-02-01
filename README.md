@@ -141,7 +141,7 @@ You can bring in values from javascript into your shader as variables. For insta
     ]
   });
 ```
-This Will define two variables in your shader like so:
+This will define two variables in your shader like so:
 
 ```glsl
 uniform float randX;
