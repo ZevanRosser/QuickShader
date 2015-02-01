@@ -213,7 +213,7 @@
     },
     
     update: function(updateFunction) {
-      this.updateFunction = updateFunction;
+      this.updateFunction = updateFunction.bind(this);
     },
     
     render: function(time) {
