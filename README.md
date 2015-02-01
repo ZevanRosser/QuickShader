@@ -55,7 +55,7 @@ q.ctx;
     
 ```
 
-## Shader Inputs
+### Shader Inputs
 
 There are a few default shader inputs:
 
@@ -84,7 +84,7 @@ uniform bool mouseClicked;
 ```
 
 
-## Textures
+### Textures
 
 You can add as many textures to your shader as you like. You can link `image` and/or `canvas` nodes and **QuickShader** does the rest:
 
@@ -117,7 +117,7 @@ void main(void) {
 }
 ```
 
-## Custom Inputs
+### Custom Inputs
 You can bring in values from javascript into your shader as variables. For instance:
 
 ```js
