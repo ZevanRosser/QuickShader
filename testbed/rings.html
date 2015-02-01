@@ -51,29 +51,26 @@
     <div id="frame"></div>
     
     <script id="some-shader" type="x-shader/x-fragment">
-      
-      float dmp = 2.3;
-      
+        
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         
-        float v = smoothstep(0.0, 1.0, 1.0 - (distance(vec2(0.5, 0.5), uv)));
+        float v = smoothstep(0.0, 1.0, 1.0 - distance(vec2(0.5, 0.5), uv));
         
-        float a = atan(distance(uv, vec2(0.4 + 0.4 * sin(time / dmp), 0.4)));
-        float b = atan(distance(uv, vec2(0.2, 0.55 )));
+        float a = distance(uv, vec2(0.4 + 0.4 * sin(time / 2.3), 0.4));
+        float b = distance(uv, vec2(0.2, 0.55 ));
    
-        float ttt = acos(sin(cos(a * 50.0) - sin(b * 32.0) * 10.0 ));
+        float ab = acos(sin(cos(a * 50.0) - sin(b * 32.0) * 10.0));
         
-        float cl = min(ttt, v);
+        float c = min(ab, v);
         
-        cl += 0.6 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.5, 0.7))) - a * 0.5);
+        c += 0.6 * smoothstep(0.1, 0.005, distance(uv, vec2(0.5, 0.7)) - a * 0.5);
         
-        cl = cl - 0.6 * smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.4, 0.7))) - a * 0.25);
+        c -= 0.6 * smoothstep(0.1, 0.005, distance(uv, vec2(0.4, 0.7)) - a * 0.25);
         
-        cl += smoothstep(0.1, 0.005, atan(distance(uv, vec2(0.4, 0.3))) - a * 0.15);
+        c += smoothstep(0.1, 0.005, distance(uv, vec2(0.4, 0.3)) - a * 0.15);
         
-
-        gl_FragColor = vec4(cl * 0.8, cl * 0.9, cl, 1.0);
+        gl_FragColor = vec4(c * 0.8, c * 0.9, c, 1.0);
       }
       
     </script>

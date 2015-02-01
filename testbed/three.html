@@ -51,39 +51,38 @@
     <div id="frame"></div>
     
     <script id="some-shader" type="x-shader/x-fragment">
-      
  
       #define NUM 11
-      float t = 0.;
+ 
       float rand(vec2 co){
         return fract(sin(dot(co.xy, vec2(12.9891,78.233))) * 43758.5453);
       }
       
-      float ting(float i, vec2 uv, vec2 loc){
+      float thing(float i, vec2 uv, vec2 loc){
         return smoothstep(0.1, 0.7 + i / 20.0, 1. - atan(distance(uv, loc)) * 3.);
       }
       
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         
-        float cl = 0.0;
+        float c = 0.0;
         float v = 2. - smoothstep(0.0, 1.0, 1.0 - atan(distance(uv, vec2(0.5, 0.5)))) * 2.;
         
-        t = cos(time);
+        float t = cos(time);
 
         for (int i = 0; i < NUM; i++){
           float fi = float(i);
-          float tin = ting(fi * 1.2 * cos(time * float(i - NUM / 2) * 0.3), uv, 
-                           vec2(0.1 * fi - 0.1 + 0.03 * cos(time + fi), 
-                           rand(vec2(fi, 0.9))));
-          if (tin > cl) {
-           cl += smoothstep(cl, 1.2, tin);
+          float th = thing(fi * 1.2 * cos(time * float(i - NUM / 2) * 0.3), uv, 
+                            vec2(0.1 * fi - 0.1 + 0.03 * cos(time + fi), 
+                            rand(vec2(fi, 0.9))));
+          if (th > c) {
+           c += smoothstep(c, 1.2, th);
           }
         }
         
-        cl = sin(acos(cl - 0.2)) + rand(gl_FragCoord.xy + time) * 0.14 - v * 0.5;
+        c = sin(acos(c - 0.2)) + rand(gl_FragCoord.xy + time) * 0.14 - v * 0.5;
 
-        gl_FragColor = vec4(cl * 0.94, cl , cl * 0.9, 1.0);
+        gl_FragColor = vec4(c * 0.94, c, c * 0.9, 1.0);
       }
       
     </script>
