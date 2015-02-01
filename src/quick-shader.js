@@ -249,8 +249,6 @@
       
       gl.uniform2f(inputs[4], mouseX, mouseY);
       
-      console.log(this.mouseDown);
-      
       gl.uniform1f(inputs[5], +this.mouseDown);
       gl.uniform1f(inputs[6], +this.mouseUp);
       gl.uniform1f(inputs[7], +this.mouseClicked);
