@@ -2,15 +2,13 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    //clean: ["build/*"],
 
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+        banner: '/*QuickShader v<%= pkg.version %> */\n',
         mangle: {
           except: ['QuickShader']
-        },
-        compress: true
+        }
       },
       dist: {
         files: {

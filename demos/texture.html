@@ -39,13 +39,13 @@
     
     <script id="some-shader" type="x-shader/x-fragment">
 
-      float waveyness = 30.0;
+      float waviness = 30.0;
       float dampSpeed = 0.3;
       
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
         
-        uv.y = uv.y + 0.01 * sin((uv.x + time * dampSpeed) * waveyness); 
+        uv.y = uv.y + 0.01 * sin((uv.x + time * dampSpeed) * waviness); 
         
         gl_FragColor = texture2D(coins,uv);
       }

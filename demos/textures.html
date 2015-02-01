@@ -64,7 +64,8 @@
         vec4 a = texture2D(coins, uv);
         vec4 b = texture2D(sketch, uv);
           
-        gl_FragColor = a * b;
+        // darken blend mode
+        gl_FragColor = min(a,b);  
       }
       
     </script>
