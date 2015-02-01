@@ -28,6 +28,14 @@ q.play();
 // pause rendering
 q.pause();
 
+// hook into the `render` loop
+// (you can use this to update custom uniform values)
+q.update(function(inputs) {
+  inputs.someCustomInput = Math.random();
+  // `this` is bound to the `QuickShader` instance so you
+  // can really easily customize things
+});
+
 // change the size of the canvas (updates `width` and `height` properties)
 q.size(500, 300);
 
@@ -127,15 +135,25 @@ You can bring in values from javascript into your shader as variables. For insta
     height: 400,
     parentNode: '#frame', 
     inputs: [
+      // currently only `int`, `float` and `bool` are supported
       {type: 'float', name: 'randX', value: Math.random()},
       {type: 'float', name: 'randY', value: Math.random()}
     ]
   });
 ```
-Will define two variables in your shader like so:
+This will define two variables in your shader like so:
 
 ```glsl
-float randX = 0.3623482734; // some random value from javascript
-float randY = 0.23324i2342; // some other random value
+uniform float randX;
+uniform float randY;
+```
+
+Then if you want to update the values of these uniforms you can use the `update` function:
+
+```js
+q.update(function(inputs) {
+  inputs.randX = Math.random();
+  inputs.randY = Math.random();
+});
 ```
 
