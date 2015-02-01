@@ -8,27 +8,15 @@
       
       window.addEventListener('load', function() {
         
-        var img = new Image();
-        
-        img.src = 'coins.jpg';
-
-        img.addEventListener('load', function() {
-          
           var q = new QuickShader({
             shader: document.getElementById('some-shader').textContent,
             width: 400, 
             height: 400,
-            parentNode: '#frame', 
-            // point to the image and give it a name
-            textures: [
-              {name: 'coins', src: img}
-            ]
+            parentNode: '#frame'
           });
           
           q.play();
-          
-        });
-        
+
       });
     </script>
 

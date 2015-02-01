@@ -47,9 +47,9 @@
     <div id="frame"></div>
     
     <script id="some-shader" type="x-shader/x-fragment">
+      
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
-        
         
         float lines = atan(uv.y - 0.5, uv.x - 0.1);
         lines += atan(uv.y - 0.75, uv.x - 0.5);
