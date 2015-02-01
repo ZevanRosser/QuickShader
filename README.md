@@ -63,15 +63,24 @@ There are a few default shader inputs:
 // the resolution in pixels
 uniform vec2 resolution;
 
-// the mouse location in pixels inside the canvas
-uniform vec2 mouse;
-
 // shader playback time in seconds
 uniform float time;
 
 // the milliseconds at the start of the program
 // ranging from 0.0 to 1.0 (useful for random seeds)
 uniform float millis;
+
+// the mouse location in pixels inside the canvas
+uniform vec2 mouse;
+
+// true while mouse is down
+uniform bool mouseDown; 
+
+// true when mouse is first up
+uniform bool mouseUp; 
+
+// true when mouse is clicked
+uniform bool mouseClicked; 
 ```
 
 
