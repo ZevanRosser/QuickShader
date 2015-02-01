@@ -2,33 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>QuickShader Debug</title>
+    <title>QuickShader</title>
     <script src="../src/quick-shader.js"></script>
     <script>
       
       window.addEventListener('load', function() {
-        
-        var img = new Image();
-        
-        img.src = 'coins.jpg';
 
-        img.addEventListener('load', function() {
-          
           var q = new QuickShader({
             shader: document.getElementById('some-shader').textContent,
             width: 400, 
             height: 400,
             parentNode: '#frame', 
-            // point to the image and give it a name
-            textures: [
-              {name: 'coins', src: img}
-            ]
+
           });
           
           q.play();
           
-        });
-        
       });
     </script>
 

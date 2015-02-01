@@ -9,6 +9,11 @@
     pageY = e.pageY;
   });
   
+  document.addEventListener('touchmove', function(e) {
+    pageX = e.touches[0].pageX;
+    pageY = e.touches[0].pageY;
+  });
+  
   var vertexShader = 'attribute vec2 pos;void main(){gl_Position=vec4(pos.x,pos.y,0.0,1.00);}',
       header = [
         '#ifdef GL_ES\n',
@@ -115,18 +120,21 @@
       
       this.canvas.addEventListener('click', this.onClick);
       this.canvas.addEventListener('mousedown', this.onMouseDown);
+      this.canvas.addEventListener('touchstart', this.onMouseDown);
+
       document.addEventListener('mouseup', this.onMouseUp);
+      document.addEventListener('touchend', this.onMouseUp);
     },
     
-    onClick: function() {
+    onClick: function(e) {
       this.mouseClicked = true;
     },
     
-    onMouseDown: function() {
+    onMouseDown: function(e) {
       this.mouseDown = true;
     },
     
-    onMouseUp: function() {
+    onMouseUp: function(e) {
       this.mouseUp = true;
       this.mouseDown = false;
     },
