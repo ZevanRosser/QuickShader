@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var img = new Image();
+        
+        img.src = 'coins.jpg';
+
+        img.addEventListener('load', function() {
+          
+          var q = new QuickShader({
+            shader: document.getElementById('some-shader').textContent,
+            width: 400, 
+            height: 400,
+            parentNode: '#frame', 
+            // point to the image and give it a name
+            textures: [
+              {name: 'coins', src: img}
+            ]
+          });
+          
+          q.play();
+          
+        });
+        
+      });
+    </script>
+
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        vec2 mouse = mouse.xy / resolution.xy;
+        mouse.y = 1.0 - mouse.y;
+        
+        vec4 c = vec4(0.0, 0.0, 0.0, 1.0);
+
+        if (mouseDown) {
+          c.x = smoothstep(0.2, 0.1, distance(uv, mouse));
+        } else {
+          c.y = smoothstep(0.2, 0.1, distance(uv, mouse));
+        }
+        
+        gl_FragColor = c;
+      }
+      
+    </script>
+    
+  </body>
+</html>
