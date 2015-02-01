@@ -53,9 +53,9 @@
     <script id="some-shader" type="x-shader/x-fragment">
       
  
-      #define NUM 8
-      float t = 0.;
-      float rand(vec2 co){
+      #define NUM 8 
+        
+      float rand(vec2 co){ 
         return fract(sin(dot(co.xy, vec2(12.9891,78.233))) * 43754.6453);
       }
       
@@ -71,42 +71,40 @@
         uv.y -= max(0.0,(resolution.y - resolution.x) / resolution.y);
          
         float cl = 0.0;
-        float v = 2. - smoothstep(0.0, 1.0, 1.0 - atan(distance(uv, vec2(0.5, 0.5)))) * 2.;
+        float dl = 0.0;
+        float v = 2. - smoothstep(0.0, 1.0, 1.0 - (distance(uv, vec2(0.5, 0.5)))) * 2.;
         
-        t = cos(time);
+        float t = cos(time);
 
         for (int i = 0; i < NUM; i++){
           float fi = float(i);
-          float tin = ting(fi * 1.2 * cos(time * float(i - NUM / 2) * 0.3), uv, 
-                           vec2(0.1 * fi - 0.1 + 0.03 * cos(time + fi), 
-                           rand(vec2(fi, 0.9))));
+          float ty = rand(vec2(fi, 0.9));
+          float tx = 0.1 * fi - 0.1 + 0.03 * cos(time + fi);
+          float tcos = cos(time * float(i - NUM / 2) * 0.3);
+          float tin = ting(fi * 1.2 * tcos, uv, vec2(tx, ty));
+          
           if (tin > cl) {
-           cl += smoothstep(cl, 1.2, tin);
+            cl += smoothstep(cl, 1.2, tin);
           }
-        }
-        float dl = 0.0;
-        
-        for (int i = 0; i < NUM; i++){
-          float fi = float(i);
-          float tin = ting(fi * 1.1 * cos(time * float(i - NUM / 2) * 0.3), uv, 
-                           vec2(0.1 * fi - 0.1 + 0.03 * cos(time + fi) + 0.01, 
-                           rand(vec2(fi, 0.9)) + 0.01));
+          
+          tin = ting(fi * 1.1 * tcos, uv, vec2(tx + 0.01, ty + 0.01));
+          
           if (tin > dl) {
-           dl += smoothstep(dl, 1.1, tin);
+            dl += smoothstep(dl, 1.1, tin);
           }
         }
+       
         
         cl = sin(acos(cl - 0.2));
         dl = sin(acos(dl - 0.2));
         
-        float j = sin( 5. * smoothstep(0.3, 1.2, dl))  ;
+        float j = sin(5.0 * smoothstep(0.3, 1.2, dl));
 
         cl = max(cl , j * 1.2);
-        
         cl += rand(gl_FragCoord.xy + time) * 0.14;
-        cl -= v *0.6;
+        cl -= v * 0.6;
         
-        gl_FragColor = vec4(cl * 1.44, (cl + dl) / 2.3, cl * .9, 1.0);
+        gl_FragColor = vec4(cl * 1.44, (cl + dl) / 2.3, cl * 0.9, 1.0);
       }
       
     </script>
