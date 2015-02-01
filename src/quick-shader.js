@@ -1,6 +1,8 @@
 (function() {
   
-  var pageX = 0, pageY  = 0;
+  var pageX = 0, 
+      pageY  = 0;
+  
   document.addEventListener('mousemove', function(e) {
     pageX = e.pageX;
     pageY = e.pageY;
@@ -11,6 +13,9 @@
         '#ifdef GL_ES\n',
         'precision highp float;\n',
         '#endif\n',
+        'uniform bool mouseDown;\n',
+        'uniform bool mouseUp;\n',
+        'uniform bool mouseClicked;\n',
         'uniform vec3 resolution;\n',
         'uniform float time;\n',
         'uniform float millis;\n',
@@ -40,6 +45,7 @@
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
+    this.addCanvasMouseEvents();
     
     if (params.parentNode) {
       this.parentNode = typeof params.parentNode === 'object' ? 
@@ -89,8 +95,38 @@
       this.millis = new Date().getMilliseconds() / 1000;
     },
     
+    addCanvasMouseEvents: function() {
+      this.mouseDown = false;
+      this.mouseUp = false;
+      this.mouseClicked = false;
+      
+      this.onClick = this.onClick.bind(this);
+      this.onMouseDown = this.onMouseDown.bind(this);
+      this.onMouseUp = this.onMouseUp.bind(this);
+      
+      this.canvas.addEventListener('click', this.onClick);
+      this.canvas.addEventListener('mousedown', this.onMouseDown);
+      document.addEventListener('mouseup', this.onMouseUp);
+    },
+    
+    onClick: function() {
+      this.mouseClicked = true;
+    },
+    
+    onMouseDown: function() {
+      this.mouseDown = true;
+    },
+    
+    onMouseUp: function() {
+      this.mouseUp = true;
+      this.mouseDown = false;
+    },
+    
     destroy: function() {
       this.reset();
+      this.canvas.removeEventListener('click', this.onClick);
+      this.canvas.removeEventListener('mousedown', this.onMouseDown);
+      document.removeEventListener('mouseup', this.onMouseUp);
       if (this.canvas.parentNode) {
         this.canvas.parentNode.removeChild(this.canvas);
       }
@@ -190,6 +226,10 @@
       inputs[2] = gl.getUniformLocation(this.shaderProgram,'resolution');
       inputs[3] = gl.getUniformLocation(this.shaderProgram,'millis');
       inputs[4] = gl.getUniformLocation(this.shaderProgram, 'mouse');
+       
+      inputs[5] = gl.getUniformLocation(this.shaderProgram, 'mouseDown');
+      inputs[6] = gl.getUniformLocation(this.shaderProgram, 'mouseUp');
+      inputs[7] = gl.getUniformLocation(this.shaderProgram, 'mouseClicked');
 
       for (var i = 0; i < textureNum; i++){
         tex = gl.getUniformLocation(this.shaderProgram, this.textures[i].name);
@@ -209,6 +249,15 @@
       
       gl.uniform2f(inputs[4], mouseX, mouseY);
       
+      console.log(this.mouseDown);
+      
+      gl.uniform1f(inputs[5], +this.mouseDown);
+      gl.uniform1f(inputs[6], +this.mouseUp);
+      gl.uniform1f(inputs[7], +this.mouseClicked);
+      
+      this.mouseUp = false;
+      this.mouseClicked = false;
+        
       gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVBO);
       gl.vertexAttribPointer(inputs[0], 2, gl.FLOAT, false, 0, 0);
       
