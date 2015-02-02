@@ -15,7 +15,7 @@
           height: 400,
           parentNode: '#frame', 
           inputs: [
-            {type: 'float', name: 'xLoc', value: '0.0'}
+            {type: 'float', name: 'xLoc', value: '0.5'}
           ]
         });
         
@@ -37,7 +37,7 @@
     
     <div id="frame"></div>
     drag the slider <br />
-    <input id='slider' type="range" min="0" max="1" step="0.01" value="0">
+    <input id='slider' type="range" min="0" max="1" step="0.01" value="0.5">
     
     <script id="some-shader" type="x-shader/x-fragment">
       
@@ -46,9 +46,12 @@
         
         vec4 c = vec4(0.0, 0.0, 0.0, 1.0);
 
-        c.r = smoothstep(0.2, 0.1, distance(uv, vec2(xLoc, 0.5)));
+        float a = sin(distance(uv, vec2(xLoc, 0.5)) * 30.0);
+        float b = sin(distance(uv, vec2(1.0 - xLoc, 0.5)) * 30.0);
         
-        gl_FragColor = c;
+        float col = a + b;
+        
+        gl_FragColor = vec4(col + a * 1.2, col, col + b * 1.2, 1.0);
       }
       
     </script>
