@@ -25,6 +25,10 @@ var q = new QuickShader({
 // start rendering/animation
 q.play();
 
+// just an alias of `play`, useful for pens on http://codepen.com
+// since the `play` method gets disabled on thumbnail previews
+q.start()
+
 // pause rendering
 q.pause();
 
