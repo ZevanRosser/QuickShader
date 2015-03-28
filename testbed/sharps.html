@@ -50,38 +50,50 @@
     
     <div id="frame"></div>
     
-    
-    
-    
+
     <script id="some-shader" type="x-shader/x-fragment">
       
       float co = 1.0;
+      
+      float rand(vec2 co){
+        return fract(sin(dot(co.xy, vec2(12.9891,78.233))) * 43798.545);
+      }
+      
       float cloud(vec2 uv, vec2 loc) {
         vec2 n = uv + loc * 7.;
-        float x = n.x;
-        float y = n.y;
-        float x2 = x * x;
-        return max((x*(x - 0.3) + y*y), (x2 -cos(y + time * co) * y + cos(x) * y )) * 8.;
+        float x = n.x - 0.2;
+        float y = n.y - 0.2 + 0.1 * cos(time * co * 0.5);
+        float x2 = x * x; 
+        
+        return max((x*(x - 0.3) + y*y), (x2 -cos(y + time * co) * y + cos(x + time) * y )) * 8.;
       }
         
       void main(void) {
         vec2 uv = gl_FragCoord.xy / resolution.xy;
- 
+        
         co = 1.0;
         float a = cloud(uv, vec2(-0.06, -0.07));
-        a = 1.0-(a * 2.);
+         
         
         co = 0.4;
-        float b = cloud(uv, vec2(-0.06, -0.05));
+        float b = cloud(uv, vec2(-0.06, -0.03));
         
         
         co = 1.4;
         float c = cloud(uv, vec2(-0.01, -0.1));
         
+        co = 0.8;
+        float d = cloud(uv, vec2(0.01, -0.02));
+
         
-        float cl = a * b * c;
+        float cl = a * b * c * d;
+        float cl2 = (a + b - c + d) / 8.;
+        float j = max(cl, cl2);
+        cl = dot(j, rand(uv + time)) * 0.3 + j;
         
-        gl_FragColor = vec4(cl, cl, cl, 1.0);
+        
+        
+        gl_FragColor = vec4(cl, cl + cl2 * 0.2, cl + cl2 * 0.4, 1.0);
       }
       
     </script>
