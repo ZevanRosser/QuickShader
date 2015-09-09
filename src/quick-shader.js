@@ -1,5 +1,5 @@
+// QuickShader by Zevan Rosser 2015
 (function() {
-  // ok joe I am moe
   var pageX = 0, 
       pageY  = 0, 
       noop = function(){};
