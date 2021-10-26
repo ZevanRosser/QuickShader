@@ -25,7 +25,7 @@
     </script>
     
   </head>
-  <body>
+  <body bgColor="green">
     
     <div id="frame"></div>
     custom input to randomly position red blob
@@ -39,7 +39,7 @@
 
         c.r = smoothstep(0.2, 0.1, distance(uv, vec2(randX, randY)));
         
-        gl_FragColor = c;
+        gl_FragColor = vec4(c.r, c.g, c.b, c.r);
       }
       
     </script>
