@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var img = new Image();
+        
+        img.src = 'grad.png';
+
+
+        img.addEventListener('load', function() {
+          
+          var q = new QuickShader({
+            shader: document.getElementById('waves').textContent,
+            width: innerWidth, 
+            height: innerHeight,
+            parentNode: '#frame', 
+            // point to the image and give it a name
+            textures: [
+              {name: 'texIn', src: img},
+              {name: 'texIn2', src: img}
+            ],
+            inputs: [
+              { type: 'float', name: 'size', value: 2 },
+              { type: 'float', name: 'tiles', value: 4 }
+            ]
+          });
+
+          q.render()
+          
+          //q.play();
+
+          //q.addShader(document.getElementById('some-shader-2').textContent)
+
+          const buffer = document.createElement('canvas').getContext('2d')
+          buffer.canvas.width = q.canvas.width;
+          buffer.canvas.height = q.canvas.height;
+
+          let i = 0;
+
+          //setInterval(() => {
+
+          console.time('cool')
+
+          q.render();
+
+          q.replaceTexture('texIn', img);
+        
+          //q.changeShader(document.getElementById('waves').textContent)
+
+          q.render(i += .01)
+          
+
+          q.replaceTexture('texIn', q.canvas);
+
+          q.changeShader(document.getElementById('polar').textContent)
+
+          q.render()
+
+          buffer.drawImage(q.canvas, 0, 0);
+
+          q.replaceTexture('texIn', q.canvas);
+
+          q.changeShader(document.getElementById('tiles').textContent)
+
+          q.render()
+
+          q.replaceTexture('texIn', q.canvas);
+          q.replaceTexture('texIn2', buffer.canvas);
+
+          q.changeShader(document.getElementById('darken').textContent)
+
+          q.render()
+
+          q.replaceTexture('texIn', q.canvas);
+
+          q.changeShader(document.getElementById('polar').textContent)
+
+          q.render()
+
+          buffer.drawImage(q.canvas, 0, 0);
+
+           q.replaceTexture('texIn', q.canvas);
+
+          q.changeShader(document.getElementById('tiles').textContent)
+
+          q.render()
+
+           
+           q.replaceTexture('texIn', buffer.canvas);
+           q.replaceTexture('texIn2', q.canvas);
+
+
+          q.changeShader(document.getElementById('darken').textContent)
+
+          q.render()
+
+          buffer.drawImage(q.canvas, 0, 0);
+
+          q.replaceTexture('texIn', q.canvas);
+
+          q.changeShader(document.getElementById('polar').textContent)
+
+          q.render()
+
+           q.replaceTexture('texIn', buffer.canvas);
+           q.replaceTexture('texIn2', q.canvas);
+
+
+          q.changeShader(document.getElementById('darken').textContent)
+
+          q.render()
+
+
+
+
+
+          console.timeEnd('cool')
+
+
+
+          //q.replaceTexture('texIn', q.canvas);
+          //q.replaceTexture('texIn2', q.canvas);
+
+          // q.changeShader(document.getElementById('invert').textContent)
+
+          // q.replaceTexture('texIn', q.canvas);
+
+          // q.render()
+
+          //}, 16);
+
+          
+         
+          let c = 0;
+          document.addEventListener('mousedown', e => {
+           // q.swap(1)
+           c++;
+           console.log(c % 2)
+           if (c % 2 == 1) { 
+            q.changeShader(document.getElementById('some-shader').textContent)
+           } 
+           if (c % 2 == 0) { 
+             q.changeShader(document.getElementById('some-shader-2').textContent)
+           }
+            // c++
+            //const idx = q.changeShader(document.getElementById('some-shader').textContent)
+          
+          })
+        });
+        
+      });
+    </script>
+
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+
+    <script id="tiles" type="x-shader/x-fragment">
+      void main() {
+        vec2 uv = mod(gl_FragCoord.xy / resolution.xy * tiles, 1.);
+        gl_FragColor = texture2D(texIn, uv);
+      }
+    </script>
+
+    <script id="polar" type="x-shader/x-fragment">
+
+      void main() {
+ vec2 relativePos = gl_FragCoord.xy - (resolution.xy / 2.0);
+ vec2 polar;
+ polar.y = sqrt(relativePos.x * relativePos.x + relativePos.y * relativePos.y);
+ polar.y /= resolution.x / size;
+ polar.y = 1.0 - polar.y;
+
+ polar.x = atan(relativePos.y, relativePos.x);
+ polar.x -= 1.57079632679;
+ if(polar.x < 0.0){
+   polar.x += 6.28318530718;
+ }
+ polar.x /= 6.28318530718;
+ polar.x = 1.0 - polar.x;
+
+ vec4 c = texture2D(texIn, polar);
+  gl_FragColor = vec4(c);
+}
+      
+    </script>
+
+    <script id="invert" type="x-shader/x-fragment">
+
+      float waviness = 30.0;
+      float dampSpeed = 0.3;
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+
+        vec4 c = texture2D(texIn,uv);
+        gl_FragColor = vec4(1. - c.r, 1. - c.g, 1. - c.b, 1.);
+      }
+      
+    </script>
+
+    <script id="waves" type="x-shader/x-fragment">
+
+      float waviness = 30.0;
+      float dampSpeed = 0.3;
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        uv.y = uv.y + 0.1 * sin((uv.x + time * dampSpeed) * waviness); 
+        
+        gl_FragColor = texture2D(texIn,uv);
+      }
+      
+    </script>
+
+    <script id="darken" type="x-shader/x-fragment">
+    
+      void main()  {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        vec4 a = texture2D(texIn, uv);
+        vec4 b = texture2D(texIn2, uv);
+          
+        // darken blend mode
+        gl_FragColor = max(a,b);  
+      }
+      
+    </script>
+
+    
+  </body>
+</html>

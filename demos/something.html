@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader Debug</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', () => {
+        
+        const gradient = document.getElementById('gradient').textContent;
+        var frame = document.getElementById('frame'),
+            q = new QuickShader({
+              shader: gradient,
+              width: 400, 
+              height: 400,
+              parentNode: frame, 
+              inputs: [
+                { type: 'float', name: 'sx', value: '0.5' },
+                { type: 'float', name: 'sy', value: '0.5' },
+                { type: 'float', name: 'ang', value: '0.' },
+                { type: 'float', name: 'dist', value: '0.' }
+              ]
+            });
+        
+        //q.play();
+
+        let mx = 0;
+        let my = 0;
+        let sx = 0;
+        let sy = 0;
+        let ang = 0;
+        let dist = 0;
+
+        document.addEventListener('mousedown', e => {
+          mx = e.clientX / q.width;
+          my = 1. - e.clientY / q.height;
+        })
+
+        document.addEventListener('mousemove', e => {
+          sx = e.clientX / q.width;
+          sy = 1. - e.clientY / q.height;
+
+          const dy = my - sy;
+          const dx = mx - sx;
+
+          dist = Math.sqrt(dx * dx + dy * dy) 
+          ang = Math.atan2(dy, dx);
+        })
+
+        q.update(inputs => {
+          inputs.sx = sx;
+          inputs.sy = sy;
+          inputs.ang = ang;
+          inputs.dist = dist;
+        });
+
+        setInterval(() => {
+          q.changeShader(gradient)
+          q.render();
+          
+        }, 16);
+        
+        // var resize = function() {
+        //   q.size(window.innerWidth, window.innerHeight);
+        // };
+        
+        // window.addEventListener('resize', resize);
+        // resize();
+        
+      });
+      
+    </script>
+    <style>
+      * {
+        margin:  0;
+        padding: 0;
+      }
+      
+      body {
+        background: #333; 
+        color : white;
+        overflow: hidden;
+      }
+      
+      #frame {
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="gradient" type="x-shader/x-fragment">
+
+    void main(void) {      
+      vec2 pos = vec2(sx, sy);
+      vec2 uv = gl_FragCoord.xy / resolution.xy - pos;
+
+      float x =  .5 + length(uv) * dist * cos(atan(uv.y, -uv.x) + ang) ;
+	    
+      gl_FragColor = mix( vec4(0, 0, 0, 1), vec4(1, 1, 1, 1), smoothstep(0.,1.,x) );
+    }
+
+      /*
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+
+        vec4 q = vec4(0., 1.-uv.y, 1., .0);
+        vec3 v = vec3(1., 1., 0.);
+
+        vec3 temp = cross(q.xyz, v) + q.w * v;
+        vec3 rotated = v + 2.0*cross(q.xyz, temp);
+        
+        gl_FragColor = vec4(rotated.z, rotated.z, rotated.z, 1.0);
+      }*/
+      
+    </script>
+    
+  </body>
+</html>

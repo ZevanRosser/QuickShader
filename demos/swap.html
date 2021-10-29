@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>QuickShader</title>
+    <script src="../src/quick-shader.js"></script>
+    <script>
+      
+      window.addEventListener('load', function() {
+        
+        var img = new Image();
+        
+        img.src = 'imgs/coins.jpg';
+
+
+        img.addEventListener('load', function() {
+          
+          var q = new QuickShader({
+            shader: document.getElementById('waves').textContent,
+            width: 400, 
+            height: 400,
+            parentNode: '#frame', 
+            // point to the image and give it a name
+            textures: [
+              {name: 'texIn', src: img}
+            ]
+          });
+          
+          //q.play();
+
+          //q.addShader(document.getElementById('some-shader-2').textContent)
+
+          setInterval(() => {
+        
+          q.changeShader(document.getElementById('waves').textContent)
+
+          q.render()
+
+          q.changeShader(document.getElementById('invert').textContent)
+
+          q.replaceTexture('texIn', q.canvas);
+
+          q.render()
+
+          }, 16);
+
+          
+         
+          let c = 0;
+          document.addEventListener('mousedown', e => {
+           // q.swap(1)
+           c++;
+           console.log(c % 2)
+           if (c % 2 == 1) { 
+            q.changeShader(document.getElementById('some-shader').textContent)
+           } 
+           if (c % 2 == 0) { 
+             q.changeShader(document.getElementById('some-shader-2').textContent)
+           }
+            // c++
+            //const idx = q.changeShader(document.getElementById('some-shader').textContent)
+          
+          })
+        });
+        
+      });
+    </script>
+
+  </head>
+  <body>
+    
+    <div id="frame"></div>
+    
+    <script id="some-shader" type="x-shader/x-fragment">
+
+      float waviness = 30.0;
+      float dampSpeed = 0.3;
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        uv.y = uv.y + 0.1 * sin((uv.x + time * dampSpeed) * waviness); 
+        
+        gl_FragColor = texture2D(texIn,uv);
+      }
+      
+    </script>
+
+    <script id="invert" type="x-shader/x-fragment">
+
+      float waviness = 30.0;
+      float dampSpeed = 0.3;
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+
+        vec4 c = texture2D(texIn,uv);
+        gl_FragColor = vec4(1. - c.r, 1. - c.g, 1. - c.b, 1.);
+      }
+      
+    </script>
+
+    <script id="waves" type="x-shader/x-fragment">
+
+      float waviness = 30.0;
+      float dampSpeed = 0.3;
+      
+      void main(void) {
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        
+        uv.y = uv.y + 0.01 * sin((uv.x + time * dampSpeed) * waviness); 
+        
+        gl_FragColor = texture2D(texIn,uv);
+      }
+      
+    </script>
+    
+  </body>
+</html>

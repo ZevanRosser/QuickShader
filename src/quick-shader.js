@@ -1,6 +1,4 @@
-// QuickShader by Zevan Rosser 2015
-// QuickShader by Zevan Rosser 2015
-
+// QuickShader by Zevan Rosser 2015-2021
 let pageX = 0, pageY = 0;
 
 const noop = () => {};
@@ -15,21 +13,24 @@ document.addEventListener('touchmove', e => {
   pageY = e.touches[0].pageY;
 });
 
-const vertexShader =
-    'attribute vec2 pos;void main(){gl_Position=vec4(pos.x,pos.y,0.0,1.00);}'
+const vertexShader =`
+  attribute vec2 pos;
+  void main(){
+    gl_Position = vec4(pos.x, pos.y, .0, 1.);
+  }`;
 
 const header = `
-    #ifdef GL_ES 
-    precision highp float; 
-    #endif 
-    uniform bool mouseDown; 
-    uniform bool mouseUp; 
-    uniform bool mouseClicked; 
-    uniform vec3 resolution; 
-    uniform float time;
-    uniform float millis;
-    uniform vec2 mouse;
-    uniform sampler2D tex0;
+  #ifdef GL_ES 
+  precision highp float; 
+  #endif 
+  uniform bool mouseDown; 
+  uniform bool mouseUp; 
+  uniform bool mouseClicked; 
+  uniform vec3 resolution; 
+  uniform float time;
+  uniform float millis;
+  uniform vec2 mouse;
+  uniform sampler2D tex0;
 `;
   
 // Some of this code is based off of this pen http://codepen.io/jaburns/pen/hHuLI
@@ -43,9 +44,12 @@ class QuickShader {
       console.warn('You must specify a fragment shader');
     }
 
+    this.lastIdx = 0;
+
     this.width = params.width || 400;
     this.height = params.height || 400;
     this.shader = params.shader;
+    this.shaders = [];
 
     this.textureCode = '';
     this.texturesIn = params.textures || [];
@@ -159,6 +163,7 @@ class QuickShader {
     this.reset();
     this.canvas.removeEventListener('click', this.onClick);
     this.canvas.removeEventListener('mousedown', this.onMouseDown);
+    this.canvas.removeEventListener('touchstart', this.onMouseDown);
     document.removeEventListener('mouseup', this.onMouseUp);
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
@@ -186,6 +191,7 @@ class QuickShader {
 
   run = () => {
     const time = (+new Date() - this.startTime - this.totalPauseTime) / 1000;
+     
     this.render(time);
     this.animationId = requestAnimationFrame(this.run);
   };
@@ -210,10 +216,12 @@ class QuickShader {
       ''
     );
 
-    this.configureShader();
+    this.configureShader(this.shader);
   }
-  configureShader() {
+
+  configureShader(shader) {
     const gl = this.gl;
+
     const tempProgram = gl.createProgram();
     const vs = gl.createShader(gl.VERTEX_SHADER);
     const fs = gl.createShader(gl.FRAGMENT_SHADER);
@@ -224,6 +232,7 @@ class QuickShader {
 
     gl.compileShader(vs);
     gl.compileShader(fs);
+ 
 
     if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
       infoLog = gl.getShaderInfoLog(fs);
@@ -231,7 +240,7 @@ class QuickShader {
       this.error = true;
       // log here to debug shader
       console.warn(infoLog);
-      return 'shader-error: \n ${infoLog}';
+      return `shader-error: \n ${infoLog}`;
     }
 
     gl.attachShader(tempProgram, vs);
@@ -402,7 +411,7 @@ class QuickShader {
 
   addTexture(info) {
     let gl = this.gl,
-      img = info.src,
+      img = info.src || QuickShader.tex,
       name = info.name,
       texture = gl.createTexture();
 
@@ -441,6 +450,9 @@ class QuickShader {
 //     textures: [{ name: 't0', src: img }]
 //   });
 // };
+
+QuickShader.tex = document.createElement('canvas')
+tex.width = tex.height = 1;
 
 window.QuickShader = QuickShader;
 
